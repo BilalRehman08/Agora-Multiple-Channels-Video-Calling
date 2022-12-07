@@ -78,14 +78,10 @@ class VideoCallView extends StatelessWidget {
   Widget localPreview({required VideoCallController controller}) {
     if (controller.isJoined) {
       return AgoraVideoView(
-        controller: VideoViewController(
-          rtcEngine: controller.agoraEngine,
-          canvas: VideoCanvas(
-              uid: controller.uid.text.isEmpty
-                  ? 0
-                  : int.parse(controller.uid.text)),
-        ),
-      );
+          controller: VideoViewController(
+        rtcEngine: controller.agoraEngine,
+        canvas: const VideoCanvas(uid: 0),
+      ));
     } else {
       return const Text(
         'Join a channel',
