@@ -40,6 +40,7 @@ dependencies:
   agora_uikit: ^1.1.0
   permission_handler: ^10.2.0
   agora_rtc_engine:
+  get: ^4.6.5
 
 
   

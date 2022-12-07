@@ -237,18 +237,16 @@ class _MyAppState extends State<MyApp> {
                 decoration: const InputDecoration(
                     hintText: 'Type the channel name here'),
               ),
-               TextField(
+              TextField(
                 controller: uid,
-                decoration: const InputDecoration(
-                    hintText: 'Type the uid name here'),
+                decoration:
+                    const InputDecoration(hintText: 'Type the uid name here'),
               ),
-               TextField(
+              TextField(
                 controller: tokenRole,
                 decoration: const InputDecoration(
                     hintText: 'Type the tokenrole name here'),
               ),
-
-
 
               // Button Row ends
             ],
