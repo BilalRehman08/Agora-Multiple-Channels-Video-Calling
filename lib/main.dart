@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 
 import 'video_call/video_call_controller.dart';
 
-const String appId = "239ada4eaa1547c09fd9837805765768";
-
 void main() => runApp(const MaterialApp(home: MyApp()));
 
 class MyApp extends StatelessWidget {
