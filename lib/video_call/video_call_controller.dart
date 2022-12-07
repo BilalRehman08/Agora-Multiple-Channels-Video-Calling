@@ -7,9 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 
 class VideoCallController extends GetxController {
-  String appId = "0efec5e57b8f47dabffb86ed5e5a3d5d";
+  String appId = "239ada4eaa1547c09fd9837805765768";
   String serverUrl =
-      "agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
+      "https://agora-token-service-production-99d1.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   int tokenExpireTime = 300; // Expire time in Seconds.
   bool isTokenExpiring = false; // Set to true when the token is about to expire
   final channelTextController = TextEditingController(text: '');

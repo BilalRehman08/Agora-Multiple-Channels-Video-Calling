@@ -14,61 +14,63 @@ class VideoCallView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Get started with Video Calling'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        children: [
-          // Container for the local video
-          Container(
-            height: 240,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Center(child: localPreview(controller: controller)),
-          ),
-          const SizedBox(height: 10),
-          //Container for the Remote video
-          Container(
-            height: 240,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Center(child: remoteVideo(controller: controller)),
-          ),
-          // Button Row
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: ElevatedButton(
-                  onPressed:
-                      controller.isJoined ? null : () => {controller.join()},
-                  child: const Text("Join"),
+      body: GetBuilder<VideoCallController>(builder: (_) {
+        return ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          children: [
+            // Container for the local video
+            Container(
+              height: 240,
+              decoration: BoxDecoration(border: Border.all()),
+              child: Center(child: localPreview(controller: controller)),
+            ),
+            const SizedBox(height: 10),
+            //Container for the Remote video
+            Container(
+              height: 240,
+              decoration: BoxDecoration(border: Border.all()),
+              child: Center(child: remoteVideo(controller: controller)),
+            ),
+            // Button Row
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed:
+                        controller.isJoined ? null : () => {controller.join()},
+                    child: const Text("Join"),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed:
-                      controller.isJoined ? () => {controller.leave()} : null,
-                  child: const Text("Leave"),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed:
+                        controller.isJoined ? () => {controller.leave()} : null,
+                    child: const Text("Leave"),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          TextField(
-            controller: controller.channelTextController,
-            decoration:
-                const InputDecoration(hintText: 'Type the channel name here'),
-          ),
-          TextField(
-            controller: controller.uid,
-            decoration:
-                const InputDecoration(hintText: 'Type the uid name here'),
-          ),
-          TextField(
-            controller: controller.tokenRole,
-            decoration:
-                const InputDecoration(hintText: 'Type the tokenrole name here'),
-          ),
+              ],
+            ),
+            TextField(
+              controller: controller.channelTextController,
+              decoration:
+                  const InputDecoration(hintText: 'Type the channel name here'),
+            ),
+            TextField(
+              controller: controller.uid,
+              decoration:
+                  const InputDecoration(hintText: 'Type the uid name here'),
+            ),
+            TextField(
+              controller: controller.tokenRole,
+              decoration: const InputDecoration(
+                  hintText: 'Type the tokenrole name here'),
+            ),
 
-          // Button Row ends
-        ],
-      ),
+            // Button Row ends
+          ],
+        );
+      }),
     );
   }
 
