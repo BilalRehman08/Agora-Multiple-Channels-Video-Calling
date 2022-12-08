@@ -41,6 +41,7 @@ dependencies:
   permission_handler: ^10.2.0
   agora_rtc_engine:
   get: ^4.6.5
+  firebase_core: ^2.3.0
 
 
   
