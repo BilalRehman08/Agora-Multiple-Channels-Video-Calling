@@ -17,17 +17,26 @@ class UsersListView extends StatelessWidget {
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
           }
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data!.docs[index]['name']),
-                  subtitle: Text(snapshot.data!.docs[index]['email']),
-                );
+                if (snapshot.data!.docs[index]['id'] ==
+                    usersListController.user.uid) {
+                  return const SizedBox();
+                }
+                return Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: ListTile(
+                      leading: const CircleAvatar(backgroundColor: Colors.red),
+                      tileColor: Colors.grey[200],
+                      title: Text(snapshot.data!.docs[index]['name']),
+                      subtitle: Text(snapshot.data!.docs[index]['id']),
+                      trailing: IconButton(
+                          icon: const Icon(Icons.video_call), onPressed: () {}),
+                    ));
               });
         },
       ),
