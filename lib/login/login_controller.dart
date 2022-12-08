@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/video_call/video_call_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ class LoginController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
+      Get.to(const VideoCallView());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');

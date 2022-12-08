@@ -15,7 +15,8 @@ class SignUpController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
-      addUser(userCredential.user);
+      await addUser(userCredential.user);
+      Get.to(SignUpController());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
