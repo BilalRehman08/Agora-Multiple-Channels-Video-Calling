@@ -23,8 +23,10 @@ class UsersListView extends StatelessWidget {
           return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                if (snapshot.data!.docs[index]['id'] ==
-                    usersListController.user.uid) {
+                if (snapshot.data!.docs[index]['email'] ==
+                    usersListController.currentUser.email) {
+                  usersListController.currentUserId =
+                      snapshot.data!.docs[index]['id'];
                   return const SizedBox();
                 }
                 return Padding(
