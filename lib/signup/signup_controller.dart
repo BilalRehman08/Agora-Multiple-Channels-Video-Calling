@@ -11,12 +11,7 @@ class SignUpController extends GetxController {
 
   signUpUser() async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      await addUser(userCredential.user);
+      await addUser();
       Get.to(const LoginView());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -29,15 +24,29 @@ class SignUpController extends GetxController {
     }
   }
 
-  Future<void> addUser(userid) {
+  Future addUser() async {
+    UserCredential userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    DocumentSnapshot temp =
+        await FirebaseFirestore.instance.collection('temp').doc('temp').get();
+    Map tempMap = temp.data() as Map;
+    int tempID = tempMap['count'] + 1;
+
+    FirebaseFirestore.instance.collection('temp').doc('temp').update({
+      'count': tempID,
+    });
+
     // Call the user's CollectionReference to add a new user
-    return FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .doc(userid.uid)
+        .doc(emailController.text)
         .set({
           'name': nameController.text, // John Doe
           'email': emailController.text, // Stokes and Sons
-          'id': userid.uid // 42
+          'id': tempID, // 42
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));

@@ -1,4 +1,5 @@
 import 'package:agora_ui_kit/login/login_controller.dart';
+import 'package:agora_ui_kit/signup/signup_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,7 +41,7 @@ class LoginView extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Get.to(const LoginView());
+                Get.to(const SignUpView());
               },
               child: const Text('Sign Up Page'),
             ),
