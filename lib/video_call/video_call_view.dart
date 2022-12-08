@@ -34,14 +34,14 @@ class VideoCallView extends StatelessWidget {
             // Button Row
             Row(
               children: <Widget>[
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed:
-                        controller.isJoined ? null : () => {controller.join()},
-                    child: const Text("Join"),
-                  ),
-                ),
-                const SizedBox(width: 10),
+                // Expanded(
+                //   child: ElevatedButton(
+                //     onPressed:
+                //         controller.isJoined ? null : () => {controller.join()},
+                //     child: const Text("Join"),
+                //   ),
+                // ),
+                // const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
                     onPressed:
@@ -50,21 +50,6 @@ class VideoCallView extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-            TextField(
-              controller: controller.channelTextController,
-              decoration:
-                  const InputDecoration(hintText: 'Type the channel name here'),
-            ),
-            TextField(
-              controller: controller.uid,
-              decoration:
-                  const InputDecoration(hintText: 'Type the uid name here'),
-            ),
-            TextField(
-              controller: controller.tokenRole,
-              decoration: const InputDecoration(
-                  hintText: 'Type the tokenrole name here'),
             ),
 
             // Button Row ends

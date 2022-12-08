@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_ui_kit/users/users_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -12,13 +13,12 @@ class VideoCallController extends GetxController {
       "https://agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   int tokenExpireTime = 300; // Expire time in Seconds.
   bool isTokenExpiring = false; // Set to true when the token is about to expire
-  final channelTextController = TextEditingController(text: '');
-
-  final uid = TextEditingController(text: '');
-  late var tokenRole = TextEditingController(text: '');
 
   // To access the TextField
-  Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
+  Future<void> fetchToken(
+      {required int uid,
+      required String channelName,
+      required int tokenRole}) async {
     // Prepare the Url
     String url =
         '$serverUrl/rtc/$channelName/${tokenRole.toString()}/uid/${uid.toString()}/?expiry=${tokenExpireTime.toString()}';
@@ -33,7 +33,7 @@ class VideoCallController extends GetxController {
       String newToken = json['rtcToken'];
       debugPrint('Token Received: $newToken');
       // Use the token to join a channel or renew an expiring token
-      setToken(newToken);
+      setToken(newToken, uid);
     } else {
       // If the server did not return an OK response,
       // then throw an exception.
@@ -42,7 +42,7 @@ class VideoCallController extends GetxController {
     }
   }
 
-  void setToken(String newToken) async {
+  void setToken(String newToken, int id) async {
     token = newToken;
 
     if (isTokenExpiring) {
@@ -52,7 +52,7 @@ class VideoCallController extends GetxController {
       showMessage("Token renewed");
     } else {
       // Join a channel.
-      showMessage("Token received, joining a channel...");
+      showMessage("Token received, joining a channel $channelName");
 
       // Set channel options including the client role and channel profile
       ChannelMediaOptions options = const ChannelMediaOptions(
@@ -62,13 +62,13 @@ class VideoCallController extends GetxController {
       await agoraEngine.joinChannel(
         token: token,
         channelId: channelName,
-        uid: int.parse(uid.text),
+        uid: id,
         options: options,
       );
     }
   }
 
-  String channelName = "fluttering";
+  String channelName = "";
   String token = "";
   final bool isHost = true;
 
@@ -87,7 +87,11 @@ class VideoCallController extends GetxController {
     ));
   }
 
-  Future<void> setupVideoSDKEngine() async {
+  Future<void> setupVideoSDKEngine({
+    required int id,
+    required String channelName,
+    required int tokenRole,
+  }) async {
     // retrieve or request camera and microphone permissions
     await [Permission.microphone, Permission.camera].request();
 
@@ -96,7 +100,7 @@ class VideoCallController extends GetxController {
     await agoraEngine.initialize(RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
-
+    await fetchToken(uid: id, channelName: channelName, tokenRole: tokenRole);
     // Register the event handler
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
@@ -105,6 +109,12 @@ class VideoCallController extends GetxController {
               "Local user uid:${connection.localUid} joined the channel");
 
           isJoined = true;
+          update();
+        },
+        onLeaveChannel: (connection, stats) {
+          showMessage("Local user left the channel");
+          isJoined = false;
+          agoraEngine.leaveChannel();
           update();
         },
         onUserJoined: (RtcConnection connection, int rUid, int elapsed) {
@@ -120,54 +130,40 @@ class VideoCallController extends GetxController {
           remoteUid = null;
           update();
         },
-        onTokenPrivilegeWillExpire: (RtcConnection connection, String token) {
+        onTokenPrivilegeWillExpire:
+            (RtcConnection connection, String token) async {
           showMessage('Token expiring');
           isTokenExpiring = true;
 
           // fetch a new token when the current token is about to expire
-          fetchToken(int.parse(uid.text), channelName, int.parse(uid.text));
+          await agoraEngine.startPreview();
+
+          // Set channel options including the client role and channel profile
+
+          showMessage("Fetching token ...");
+
+          await fetchToken(
+              uid: id, channelName: channelName, tokenRole: tokenRole);
           update();
         },
       ),
     );
   }
 
-  void join() async {
-    await agoraEngine.startPreview();
-
-    // Set channel options including the client role and channel profile
-
-    if (isHost) {
-      tokenRole = tokenRole;
-    } else {
-      tokenRole = tokenRole;
-    }
-
-    channelName = channelTextController.text;
-
-    if (channelName.isEmpty) {
-      showMessage("Enter a channel name");
-      return;
-    } else {
-      showMessage("Fetching token ...");
-    }
-
-    await fetchToken(
-        int.parse(uid.text), channelName, int.parse(tokenRole.text));
-  }
-
   void leave() {
     isJoined = false;
     remoteUid = null;
-    update();
+    // channelName = '';
     agoraEngine.leaveChannel();
+    Get.to(const UsersListView());
+    update();
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    setupVideoSDKEngine();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   setupVideoSDKEngine();
+  // }
 
 // Clean up the resources when you leave
   // @override

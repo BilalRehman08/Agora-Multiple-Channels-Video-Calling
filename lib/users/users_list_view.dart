@@ -1,4 +1,6 @@
 import 'package:agora_ui_kit/users/users_list_controller.dart';
+import 'package:agora_ui_kit/video_call/video_call_controller.dart';
+import 'package:agora_ui_kit/video_call/video_call_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +12,8 @@ class UsersListView extends StatelessWidget {
   Widget build(BuildContext context) {
     UsersListController usersListController =
         Get.isRegistered() ? Get.find() : Get.put(UsersListController());
+    VideoCallController videoCallController =
+        Get.isRegistered() ? Get.find() : Get.put(VideoCallController());
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: usersListController.usersStream,
@@ -37,7 +41,24 @@ class UsersListView extends StatelessWidget {
                       title: Text(snapshot.data!.docs[index]['name']),
                       subtitle: Text("${snapshot.data!.docs[index]['email']}"),
                       trailing: IconButton(
-                          icon: const Icon(Icons.video_call), onPressed: () {}),
+                          icon: const Icon(Icons.video_call),
+                          onPressed: () async {
+                            if (usersListController.currentUserId <
+                                snapshot.data!.docs[index]['id']) {
+                              videoCallController.channelName =
+                                  "${usersListController.currentUserId}${snapshot.data!.docs[index]['id']}";
+                            } else {
+                              videoCallController.channelName =
+                                  "${snapshot.data!.docs[index]['id']}${usersListController.currentUserId}";
+                            }
+
+                            await videoCallController.setupVideoSDKEngine(
+                              id: usersListController.currentUserId,
+                              channelName: videoCallController.channelName,
+                              tokenRole: 1,
+                            );
+                            Get.off(const VideoCallView());
+                          }),
                     ));
               });
         },
