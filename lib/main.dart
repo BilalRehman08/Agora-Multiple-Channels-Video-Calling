@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     VideoCallController controller = Get.put(VideoCallController());
     return GetMaterialApp(
       scaffoldMessengerKey: controller.scaffoldMessengerKey,
-      home: const UsersListView(),
+      home: const SignUpView(),
     );
   }
 }

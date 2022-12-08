@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/login/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,7 @@ class SignUpController extends GetxController {
         password: passwordController.text,
       );
       await addUser(userCredential.user);
-      Get.to(SignUpController());
+      Get.to(const LoginView());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
