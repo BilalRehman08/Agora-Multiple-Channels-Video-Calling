@@ -33,7 +33,7 @@ class UsersListView extends StatelessWidget {
                       leading: const CircleAvatar(backgroundColor: Colors.red),
                       tileColor: Colors.grey[200],
                       title: Text(snapshot.data!.docs[index]['name']),
-                      subtitle: Text(snapshot.data!.docs[index]['id']),
+                      subtitle: Text("${snapshot.data!.docs[index]['email']}"),
                       trailing: IconButton(
                           icon: const Icon(Icons.video_call), onPressed: () {}),
                     ));
