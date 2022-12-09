@@ -11,51 +11,87 @@ class VideoCallView extends StatelessWidget {
         ? Get.find<VideoCallController>()
         : Get.put(VideoCallController());
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Get started with Video Calling'),
-      ),
-      body: GetBuilder<VideoCallController>(builder: (_) {
-        return ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          children: [
-            // Container for the local video
-            Container(
-              height: 240,
-              decoration: BoxDecoration(border: Border.all()),
-              child: Center(child: localPreview(controller: controller)),
-            ),
-            const SizedBox(height: 10),
-            //Container for the Remote video
-            Container(
-              height: 240,
-              decoration: BoxDecoration(border: Border.all()),
-              child: Center(child: remoteVideo(controller: controller)),
-            ),
-            // Button Row
-            Row(
-              children: <Widget>[
-                // Expanded(
-                //   child: ElevatedButton(
-                //     onPressed:
-                //         controller.isJoined ? null : () => {controller.join()},
-                //     child: const Text("Join"),
-                //   ),
-                // ),
-                // const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed:
-                        controller.isJoined ? () => {controller.leave()} : null,
-                    child: const Text("Leave"),
+      body: SafeArea(
+        child: GetBuilder<VideoCallController>(builder: (_) {
+          if (controller.remoteUid == null) {
+            // When remote user is not connected
+            return Stack(
+              children: [
+                // Container for the local video
+                SizedBox(
+                  height: Get.height,
+                  child: Center(child: localPreview(controller: controller)),
+                ),
+                // Button Row
+                Positioned(
+                  bottom: 50,
+                  child: SizedBox(
+                    width: Get.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.red,
+                          onPressed: controller.isJoined
+                              ? () => {controller.leave()}
+                              : null,
+                          child: const Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
-            ),
-
-            // Button Row ends
-          ],
-        );
-      }),
+            );
+          }
+          // When remote user is connected
+          else {
+            return Stack(
+              children: [
+                SizedBox(
+                  height: Get.height,
+                  child: Center(child: remoteVideo(controller: controller)),
+                ),
+                const SizedBox(height: 10),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: SizedBox(
+                    height: 160,
+                    width: 110,
+                    child: Center(child: localPreview(controller: controller)),
+                  ),
+                ),
+                // Button Row
+                Positioned(
+                  bottom: 50,
+                  child: SizedBox(
+                    width: Get.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.red,
+                          onPressed: controller.isJoined
+                              ? () => {controller.leave()}
+                              : null,
+                          child: const Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        }),
+      ),
     );
   }
 
@@ -87,7 +123,8 @@ class VideoCallView extends StatelessWidget {
       );
     } else {
       String msg = '';
-      if (controller.isJoined) msg = 'Waiting for a remote user to join';
+      // if (controller.isJoined) msg = 'Waiting for remote user to join';
+      if (controller.isJoined) msg = '';
       return Text(
         msg,
         textAlign: TextAlign.center,
