@@ -32,6 +32,8 @@ class VideoCallController extends GetxController {
       Map<String, dynamic> json = jsonDecode(response.body);
       String newToken = json['rtcToken'];
       debugPrint('Token Received: $newToken');
+      isJoined = true;
+      update();
       // Use the token to join a channel or renew an expiring token
       setToken(newToken, uid);
     } else {
