@@ -12,7 +12,7 @@ class VideoCallView extends StatelessWidget {
         : Get.put(VideoCallController());
     return Scaffold(
       body: SafeArea(
-        child: GetBuilder<VideoCallController>(builder: (_) {
+        child: Obx(() {
           if (controller.remoteUid == null) {
             // When remote user is not connected
             return Stack(
@@ -32,7 +32,7 @@ class VideoCallView extends StatelessWidget {
                       children: <Widget>[
                         FloatingActionButton(
                           backgroundColor: Colors.red,
-                          onPressed: controller.isJoined
+                          onPressed: controller.isJoined.value
                               ? () => {controller.leave()}
                               : null,
                           child: const Icon(
@@ -75,7 +75,7 @@ class VideoCallView extends StatelessWidget {
                       children: <Widget>[
                         FloatingActionButton(
                           backgroundColor: Colors.red,
-                          onPressed: controller.isJoined
+                          onPressed: controller.isJoined.value
                               ? () => {controller.leave()}
                               : null,
                           child: const Icon(
@@ -97,7 +97,7 @@ class VideoCallView extends StatelessWidget {
 
 // Display local video preview
   Widget localPreview({required VideoCallController controller}) {
-    if (controller.isJoined) {
+    if (controller.isJoined.value) {
       return AgoraVideoView(
           controller: VideoViewController(
         rtcEngine: controller.agoraEngine,
@@ -117,14 +117,14 @@ class VideoCallView extends StatelessWidget {
       return AgoraVideoView(
         controller: VideoViewController.remote(
           rtcEngine: controller.agoraEngine,
-          canvas: VideoCanvas(uid: controller.remoteUid),
+          canvas: VideoCanvas(uid: controller.remoteUid?.value),
           connection: RtcConnection(channelId: controller.channelName),
         ),
       );
     } else {
       String msg = '';
       // if (controller.isJoined) msg = 'Waiting for remote user to join';
-      if (controller.isJoined) msg = '';
+      if (controller.isJoined.value) msg = '';
       return Text(
         msg,
         textAlign: TextAlign.center,

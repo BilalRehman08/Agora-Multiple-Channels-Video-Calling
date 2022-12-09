@@ -20,8 +20,9 @@ class VideoCallController extends GetxController {
 
   // uid of the local user
 
-  int? remoteUid; // uid of the remote user
-  bool isJoined = false; // Indicates if the local user has joined the channel
+  RxInt? remoteUid; // uid of the remote user
+  RxBool isJoined =
+      false.obs; // Indicates if the local user has joined the channel
 
   late RtcEngine agoraEngine;
 
@@ -57,19 +58,19 @@ class VideoCallController extends GetxController {
           showMessage(
               "Local user uid:${connection.localUid} joined the channel");
 
-          isJoined = true;
+          isJoined.value = true;
           update();
         },
         onLeaveChannel: (connection, stats) {
           showMessage("Local user left the channel");
-          isJoined = false;
+          isJoined.value = false;
           agoraEngine.leaveChannel();
           update();
         },
         onUserJoined: (RtcConnection connection, int rUid, int elapsed) {
           showMessage("Remote user uid:$rUid joined the channel");
 
-          remoteUid = rUid;
+          remoteUid = rUid.obs;
           update();
         },
         onUserOffline:
@@ -116,7 +117,7 @@ class VideoCallController extends GetxController {
       Map<String, dynamic> json = jsonDecode(response.body);
       String newToken = json['rtcToken'];
       debugPrint('Token Received: $newToken');
-      isJoined = true;
+      isJoined.value = true;
       update();
       // Use the token to join a channel or renew an expiring token
       setToken(newToken, uid);
@@ -155,7 +156,7 @@ class VideoCallController extends GetxController {
   }
 
   void leave() {
-    isJoined = false;
+    isJoined.value = false;
     remoteUid = null;
     // channelName = '';
     agoraEngine.leaveChannel();
