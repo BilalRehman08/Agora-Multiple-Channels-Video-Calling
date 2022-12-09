@@ -7,6 +7,7 @@ class UsersListController extends GetxController {
   final Stream<QuerySnapshot> usersStream =
       FirebaseFirestore.instance.collection('users').snapshots();
   int currentUserId = 0;
+  String channelName = "";
   // @override
   // void onInit() {
   //   super.onInit();

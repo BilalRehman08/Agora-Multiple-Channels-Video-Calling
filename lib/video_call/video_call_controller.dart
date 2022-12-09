@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_ui_kit/users/users_list_controller.dart';
 import 'package:agora_ui_kit/users/users_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class VideoCallController extends GetxController {
   bool isTokenExpiring = false; // Set to true when the token is about to expire
 
   String channelName = "";
+
   String token = "";
   final bool isHost = true;
 
@@ -163,11 +165,16 @@ class VideoCallController extends GetxController {
     update();
   }
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   setupVideoSDKEngine();
-  // }
+  @override
+  void onInit() {
+    super.onInit();
+    UsersListController usersListController = Get.find();
+    setupVideoSDKEngine(
+      id: usersListController.currentUserId,
+      channelName: usersListController.channelName,
+      tokenRole: 1,
+    );
+  }
 
 // Clean up the resources when you leave
   // @override

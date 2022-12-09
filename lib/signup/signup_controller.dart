@@ -46,7 +46,8 @@ class SignUpController extends GetxController {
         .set({
           'name': nameController.text, // John Doe
           'email': emailController.text, // Stokes and Sons
-          'id': tempID, // 42
+          'id': tempID,
+          'channelName': '', // 42
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
