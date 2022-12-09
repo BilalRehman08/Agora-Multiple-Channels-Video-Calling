@@ -57,7 +57,7 @@ class UsersListView extends StatelessWidget {
                               channelName: videoCallController.channelName,
                               tokenRole: 1,
                             );
-                            Get.off(const VideoCallView());
+                            Get.to(const VideoCallView());
                           }),
                     ));
               });

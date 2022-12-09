@@ -155,7 +155,7 @@ class VideoCallController extends GetxController {
     remoteUid = null;
     // channelName = '';
     agoraEngine.leaveChannel();
-    Get.to(const UsersListView());
+    Get.back();
     update();
   }
 
