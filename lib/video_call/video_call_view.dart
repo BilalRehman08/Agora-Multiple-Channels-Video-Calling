@@ -39,9 +39,9 @@ class VideoCallView extends StatelessWidget {
                     children: <Widget>[
                       FloatingActionButton(
                         backgroundColor: Colors.red,
-                        onPressed: controller.isJoined
-                            ? () => {controller.leave()}
-                            : null,
+                        onPressed: () {
+                          controller.leave();
+                        },
                         child: const Icon(
                           Icons.call_end,
                           color: Colors.white,

@@ -21,6 +21,8 @@ class VideoCallController extends GetxController {
   final bool isHost = true;
 
   User currentUser = FirebaseAuth.instance.currentUser!;
+
+  String remoteUserEmail = '';
   final Stream<QuerySnapshot> usersStream =
       FirebaseFirestore.instance.collection('users').snapshots();
   int currentUserId = 0;
@@ -160,12 +162,26 @@ class VideoCallController extends GetxController {
     }
   }
 
-  void leave() {
-    isJoined = false;
-    remoteUid = null;
-    // channelName = '';
-    agoraEngine.leaveChannel();
-    Get.back();
+  void leave() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.email)
+        .update({
+      'channelName': '',
+    });
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(remoteUserEmail)
+        .update({
+      'channelName': '',
+    });
+
+    // isJoined = false;
+    // remoteUid = null;
+    // // channelName = '';
+    // agoraEngine.leaveChannel();
+    // Get.back();
     update();
   }
 

@@ -60,6 +60,8 @@ class UsersListView extends StatelessWidget {
                               trailing: IconButton(
                                   icon: const Icon(Icons.video_call),
                                   onPressed: () async {
+                                    videoCallController.remoteUserEmail =
+                                        snapshot.data!.docs[index]['email'];
                                     if (videoCallController.currentUserId <
                                         snapshot.data!.docs[index]['id']) {
                                       videoCallController.channelName =
