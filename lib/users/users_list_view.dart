@@ -1,6 +1,4 @@
-import 'package:agora_ui_kit/users/users_list_controller.dart';
 import 'package:agora_ui_kit/video_call/video_call_controller.dart';
-import 'package:agora_ui_kit/video_call/video_call_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,13 +8,13 @@ class UsersListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UsersListController usersListController =
-        Get.isRegistered() ? Get.find() : Get.put(UsersListController());
+    // UsersListController usersListController =
+    //     Get.isRegistered() ? Get.find() : Get.put(UsersListController());
     VideoCallController videoCallController =
         Get.isRegistered() ? Get.find() : Get.put(VideoCallController());
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: usersListController.usersStream,
+        stream: videoCallController.usersStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
@@ -28,8 +26,8 @@ class UsersListView extends StatelessWidget {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 if (snapshot.data!.docs[index]['email'] ==
-                    usersListController.currentUser.email) {
-                  usersListController.currentUserId =
+                    videoCallController.currentUser.email) {
+                  videoCallController.currentUserId =
                       snapshot.data!.docs[index]['id'];
                   return const SizedBox();
                 }
@@ -43,21 +41,35 @@ class UsersListView extends StatelessWidget {
                       trailing: IconButton(
                           icon: const Icon(Icons.video_call),
                           onPressed: () async {
-                            if (usersListController.currentUserId <
+                            if (videoCallController.currentUserId <
                                 snapshot.data!.docs[index]['id']) {
                               videoCallController.channelName =
-                                  "${usersListController.currentUserId}${snapshot.data!.docs[index]['id']}";
+                                  "${videoCallController.currentUserId}${snapshot.data!.docs[index]['id']}";
                             } else {
                               videoCallController.channelName =
-                                  "${snapshot.data!.docs[index]['id']}${usersListController.currentUserId}";
+                                  "${snapshot.data!.docs[index]['id']}${videoCallController.currentUserId}";
                             }
 
-                            await videoCallController.setupVideoSDKEngine(
-                              id: usersListController.currentUserId,
-                              channelName: videoCallController.channelName,
-                              tokenRole: 1,
-                            );
-                            Get.to(const VideoCallView());
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(snapshot.data!.docs[index]['email'])
+                                .update({
+                              'channelName': videoCallController.channelName
+                            });
+
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(videoCallController.currentUser.email)
+                                .update({
+                              'channelName': videoCallController.channelName
+                            });
+
+                            // await videoCallController.setupVideoSDKEngine(
+                            //   id: usersListController.currentUserId,
+                            //   channelName: videoCallController.channelName,
+                            //   tokenRole: 1,
+                            // );
+                            // Get.to(const VideoCallView());
                           }),
                     ));
               });

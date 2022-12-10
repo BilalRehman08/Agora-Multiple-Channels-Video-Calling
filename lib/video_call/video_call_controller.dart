@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_ui_kit/users/users_list_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +20,10 @@ class VideoCallController extends GetxController {
   String token = "";
   final bool isHost = true;
 
+  User currentUser = FirebaseAuth.instance.currentUser!;
+  final Stream<QuerySnapshot> usersStream =
+      FirebaseFirestore.instance.collection('users').snapshots();
+  int currentUserId = 0;
   // uid of the local user
 
   int? remoteUid; // uid of the remote user
