@@ -185,6 +185,24 @@ class VideoCallController extends GetxController {
     update();
   }
 
+  @override
+  void onClose() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.email)
+        .update({
+      'channelName': '',
+    });
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(remoteUserEmail)
+        .update({
+      'channelName': '',
+    });
+    super.onClose();
+  }
+
   // @override
   // void onInit() {
   //   super.onInit();
