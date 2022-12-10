@@ -21,10 +21,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    VideoCallController controller = Get.put(VideoCallController());
-    return GetMaterialApp(
-      scaffoldMessengerKey: controller.scaffoldMessengerKey,
-      home: const SignUpView(),
+    return const GetMaterialApp(
+      home: SignUpView(),
     );
   }
 }
