@@ -71,26 +71,69 @@ class UsersListView extends StatelessWidget {
                                   onPressed: () async {
                                     videoCallController.remoteUserEmail =
                                         snapshot.data!.docs[index]['email'];
-                                    // if (videoCallController.currentUserId <
-                                    //     snapshot.data!.docs[index]['id']) {
-                                    //   videoCallController.channelName =
-                                    //       "${videoCallController.currentUserId}${snapshot.data!.docs[index]['id']}";
-                                    // } else {
-                                    //   videoCallController.channelName =
-                                    //       "${snapshot.data!.docs[index]['id']}${videoCallController.currentUserId}";
-                                    // }
-
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(
-                                            snapshot.data!.docs[index]['email'])
-                                        .update({'channelName': "13"});
 
                                     await FirebaseFirestore.instance
                                         .collection('users')
                                         .doc(videoCallController
                                             .currentUser.email)
-                                        .update({'channelName': "13"});
+                                        .update({
+                                      'remoteid': snapshot.data!.docs[index]
+                                          ['id'],
+                                    });
+
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(
+                                            videoCallController.remoteUserEmail)
+                                        .update({
+                                      'remoteid':
+                                          videoCallController.currentUserId,
+                                    });
+
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(videoCallController
+                                            .currentUser.email)
+                                        .update({
+                                      'remoteemail':
+                                          videoCallController.remoteUserEmail,
+                                    });
+
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(
+                                            videoCallController.remoteUserEmail)
+                                        .update({
+                                      'remoteemail':
+                                          videoCallController.currentUser.email,
+                                    });
+
+                                    if (videoCallController.currentUserId <
+                                        snapshot.data!.docs[index]['id']) {
+                                      videoCallController.channelName =
+                                          "${videoCallController.currentUserId}${snapshot.data!.docs[index]['id']}";
+                                    } else {
+                                      videoCallController.channelName =
+                                          "${snapshot.data!.docs[index]['id']}${videoCallController.currentUserId}";
+                                    }
+
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(
+                                            snapshot.data!.docs[index]['email'])
+                                        .update({
+                                      'channelName':
+                                          videoCallController.channelName
+                                    });
+
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(videoCallController
+                                            .currentUser.email)
+                                        .update({
+                                      'channelName':
+                                          videoCallController.channelName
+                                    });
 
                                     // await videoCallController.setupVideoSDKEngine(
                                     //   id: usersListController.currentUserId,

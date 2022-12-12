@@ -14,6 +14,7 @@ class VideoCallController extends GetxController {
   User currentUser = FirebaseAuth.instance.currentUser!;
   int currentUserId = 0;
   bool isJoined = false;
+  String channelName = '';
 
   String remoteUserEmail = '';
   final Stream<QuerySnapshot> usersStream =
@@ -77,6 +78,34 @@ class VideoCallController extends GetxController {
             .collection('users')
             .doc(currentUser.email)
             .update({
+          'remoteemail': '',
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(remoteUserEmail)
+            .update({
+          'remoteemail': '',
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.email)
+            .update({
+          'remoteid': 0,
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(remoteUserEmail)
+            .update({
+          'remoteid': 0,
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.email)
+            .update({
           'channelName': '',
         });
 
@@ -97,30 +126,30 @@ class VideoCallController extends GetxController {
     }
   }
 
-  @override
-  void onClose() async {
-    Get.snackbar("title", "onClose");
-    await agoraEngine.leaveChannel();
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.email)
-        .get()
-        .then((value) {
-      remoteUserEmail = value.data()!['remoteemail'];
-    });
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.email)
-        .update({
-      'channelName': '',
-    });
+  // @override
+  // void onClose() async {
+  //   Get.snackbar("title", "onClose");
+  //   await agoraEngine.leaveChannel();
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(currentUser.email)
+  //       .get()
+  //       .then((value) {
+  //     remoteUserEmail = value.data()!['remoteemail'];
+  //   });
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(currentUser.email)
+  //       .update({
+  //     'channelName': '',
+  //   });
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(remoteUserEmail)
-        .update({
-      'channelName': '',
-    });
-    super.onClose();
-  }
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(remoteUserEmail)
+  //       .update({
+  //     'channelName': '',
+  //   });
+  //   super.onClose();
+  // }
 }
