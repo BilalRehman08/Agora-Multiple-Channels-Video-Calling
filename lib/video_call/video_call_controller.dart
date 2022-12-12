@@ -15,9 +15,7 @@ class VideoCallController extends GetxController {
   int tokenExpireTime = 300; // Expire time in Seconds.
   bool isTokenExpiring = false; // Set to true when the token is about to expire
 
-  String channelName = "";
   String token = "";
-  final bool isHost = true;
 
   User currentUser = FirebaseAuth.instance.currentUser!;
 
@@ -145,7 +143,7 @@ class VideoCallController extends GetxController {
       showMessage("Token renewed");
     } else {
       // Join a channel.
-      showMessage("Token received, joining a channel $channelName");
+      showMessage("Token received, joining a channel 13");
 
       // Set channel options including the client role and channel profile
       ChannelMediaOptions options = const ChannelMediaOptions(
@@ -154,7 +152,7 @@ class VideoCallController extends GetxController {
       );
       await agoraEngine.joinChannel(
         token: token,
-        channelId: channelName,
+        channelId: "13",
         uid: id,
         options: options,
       );
