@@ -73,7 +73,7 @@ class VideoCallView extends StatelessWidget {
       controller: VideoViewController.remote(
         rtcEngine: controller.agoraEngine,
         canvas: VideoCanvas(uid: controller.remoteUid),
-        connection: const RtcConnection(channelId: "13"),
+        connection: RtcConnection(channelId: controller.channelName),
       ),
     );
   }

@@ -48,6 +48,8 @@ class SignUpController extends GetxController {
           'email': emailController.text, // Stokes and Sons
           'id': tempID,
           'channelName': '',
+          'remoteid': 0,
+          'remoteemail': '',
           // 42
         })
         .then((value) => print("User Added"))
