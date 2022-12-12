@@ -60,38 +60,21 @@ class VideoCallView extends StatelessWidget {
 
 // Display local video preview
   Widget localPreview({required VideoCallController controller}) {
-    if (controller.isJoined) {
-      return AgoraVideoView(
-          controller: VideoViewController(
-        rtcEngine: controller.agoraEngine,
-        canvas: const VideoCanvas(uid: 0),
-      ));
-    } else {
-      return const Text(
-        'Join a channel',
-        textAlign: TextAlign.center,
-      );
-    }
+    return AgoraVideoView(
+        controller: VideoViewController(
+      rtcEngine: controller.agoraEngine,
+      canvas: const VideoCanvas(uid: 0),
+    ));
   }
 
 // Display remote user's video
   Widget remoteVideo({required VideoCallController controller}) {
-    if (controller.remoteUid != null) {
-      return AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: controller.agoraEngine,
-          canvas: VideoCanvas(uid: controller.remoteUid),
-          connection: RtcConnection(channelId: controller.channelName),
-        ),
-      );
-    } else {
-      String msg = '';
-      // if (controller.isJoined) msg = 'Waiting for remote user to join';
-      if (controller.isJoined) msg = '';
-      return Text(
-        msg,
-        textAlign: TextAlign.center,
-      );
-    }
+    return AgoraVideoView(
+      controller: VideoViewController.remote(
+        rtcEngine: controller.agoraEngine,
+        canvas: VideoCanvas(uid: controller.remoteUid),
+        connection: const RtcConnection(channelId: "13"),
+      ),
+    );
   }
 }
