@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:agora_ui_kit/users/users_list_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

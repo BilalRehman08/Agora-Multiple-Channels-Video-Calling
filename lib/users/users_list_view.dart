@@ -101,7 +101,20 @@ class UsersListView extends StatelessWidget {
                 },
               );
             } else {
-              return const VideoCallView();
+              return FutureBuilder(
+                future: videoCallController.setupVideoSDKEngine(
+                  id: videoCallController.currentUserId,
+                  channelName: channelData["channelName"],
+                  tokenRole: 1,
+                ),
+                builder: (context, snapshot3) {
+                  if (snapshot3.connectionState == ConnectionState.done) {
+                    return const VideoCallView();
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              );
             }
           }),
     );

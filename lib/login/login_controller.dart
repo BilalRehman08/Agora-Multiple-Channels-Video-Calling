@@ -1,5 +1,4 @@
 import 'package:agora_ui_kit/users/users_list_view.dart';
-import 'package:agora_ui_kit/video_call/video_call_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
