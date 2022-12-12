@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,6 +41,11 @@ class VideoCallController extends GetxController {
       clientRoleType: ClientRoleType.clientRoleBroadcaster,
       channelProfile: ChannelProfileType.channelProfileCommunication,
     );
+    agoraEngine.registerEventHandler(RtcEngineEventHandler(onUserOffline:
+        (RtcConnection connection, int remoteUid,
+            UserOfflineReasonType reason) {
+      agoraEngine.leaveChannel();
+    }));
     await agoraEngine.joinChannel(
       token:
           "007eJxTYHBoylka0r3/e86zVcYP7l1XXb6L+cdXNx677W9Ulyu1uV1WYDBITUtNNk01NU+ySDMxT0lMSktLsjBLTQEKJRqnmKYUPpiW3BDIyPBhjykrIwMEgvhMDIbGDAwA9BEiAQ==",
@@ -50,30 +57,54 @@ class VideoCallController extends GetxController {
   }
 
   void leave() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser.email)
-        .update({
-      'channelName': '',
-    });
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Get.snackbar("title", "onLeave");
+        await agoraEngine.leaveChannel();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.email)
+            .get()
+            .then((value) {
+          remoteUserEmail = value.data()!['remoteemail'];
+        });
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(remoteUserEmail)
-        .update({
-      'channelName': '',
-    });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.email)
+            .update({
+          'channelName': '',
+        });
 
-    // isJoined = false;
-    // remoteUid = null;
-    // // channelName = '';
-    // agoraEngine.leaveChannel();
-    // Get.back();
-    update();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(remoteUserEmail)
+            .update({
+          'channelName': '',
+        });
+
+        // isJoined = false;
+        // remoteUid = null;
+        // // channelName = '';
+        update();
+      }
+    } on SocketException catch (_) {
+      Get.snackbar("Error", "Internet Conencetion Issue");
+    }
   }
 
   @override
   void onClose() async {
+    Get.snackbar("title", "onClose");
+    await agoraEngine.leaveChannel();
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.email)
+        .get()
+        .then((value) {
+      remoteUserEmail = value.data()!['remoteemail'];
+    });
     await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser.email)
