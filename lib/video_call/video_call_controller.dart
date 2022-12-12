@@ -13,6 +13,7 @@ class VideoCallController extends GetxController {
 
   User currentUser = FirebaseAuth.instance.currentUser!;
   int currentUserId = 0;
+  bool isJoined = false;
 
   String remoteUserEmail = '';
   final Stream<QuerySnapshot> usersStream =
@@ -41,11 +42,13 @@ class VideoCallController extends GetxController {
       clientRoleType: ClientRoleType.clientRoleBroadcaster,
       channelProfile: ChannelProfileType.channelProfileCommunication,
     );
-    agoraEngine.registerEventHandler(RtcEngineEventHandler(onUserOffline:
-        (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-      agoraEngine.leaveChannel();
-    }));
+    agoraEngine.registerEventHandler(RtcEngineEventHandler(
+      onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+        Get.snackbar("title", "onJoinChannelSuccess");
+        isJoined = true;
+        update();
+      },
+    ));
     await agoraEngine.joinChannel(
       token:
           "007eJxTYHBoylka0r3/e86zVcYP7l1XXb6L+cdXNx677W9Ulyu1uV1WYDBITUtNNk01NU+ySDMxT0lMSktLsjBLTQEKJRqnmKYUPpiW3BDIyPBhjykrIwMEgvhMDIbGDAwA9BEiAQ==",
@@ -84,7 +87,7 @@ class VideoCallController extends GetxController {
           'channelName': '',
         });
 
-        // isJoined = false;
+        isJoined = false;
         // remoteUid = null;
         // // channelName = '';
         update();

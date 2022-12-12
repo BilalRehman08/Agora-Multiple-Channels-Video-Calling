@@ -27,8 +27,15 @@ class UsersListView extends StatelessWidget {
             if (callSnapShot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+
             Map channelData = callSnapShot.data!.data() as Map;
             if (channelData["channelName"] == "") {
+              if (videoCallController.isJoined) {
+                Get.snackbar("Leaving", "Channel");
+                videoCallController.agoraEngine.leaveChannel();
+                videoCallController.isJoined = false;
+              }
+
               return StreamBuilder<QuerySnapshot>(
                 stream: videoCallController.usersStream,
                 builder: (BuildContext context,
@@ -39,6 +46,7 @@ class UsersListView extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
+
                   return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
@@ -48,6 +56,7 @@ class UsersListView extends StatelessWidget {
                               snapshot.data!.docs[index]['id'];
                           return const SizedBox();
                         }
+
                         return Padding(
                             padding: const EdgeInsets.only(bottom: 5.0),
                             child: ListTile(
@@ -99,6 +108,7 @@ class UsersListView extends StatelessWidget {
                 future: videoCallController.setupVideoSDKEngine(),
                 builder: (context, snapshot3) {
                   if (snapshot3.connectionState == ConnectionState.done) {
+                    videoCallController.isJoined = true;
                     return const VideoCallView();
                   } else {
                     return const Center(child: CircularProgressIndicator());
