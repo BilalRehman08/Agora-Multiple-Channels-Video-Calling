@@ -148,30 +148,9 @@ class VideoCallController extends GetxController {
     update();
   }
 
-  // @override
-  // void onClose() async {
-  //   Get.snackbar("title", "onClose");
-  //   await agoraEngine.leaveChannel();
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(currentUser.email)
-  //       .get()
-  //       .then((value) {
-  //     remoteUserEmail = value.data()!['remoteemail'];
-  //   });
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(currentUser.email)
-  //       .update({
-  //     'channelName': '',
-  //   });
-
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(remoteUserEmail)
-  //       .update({
-  //     'channelName': '',
-  //   });
-  //   super.onClose();
-  // }
+  @override
+  void onClose() async {
+    leave();
+    super.onClose();
+  }
 }
