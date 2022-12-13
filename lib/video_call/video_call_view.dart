@@ -39,12 +39,36 @@ class VideoCallView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       FloatingActionButton(
+                        backgroundColor: Colors.grey[600],
+                        onPressed: () {
+                          controller.microphoneMute();
+                        },
+                        child: Icon(
+                          controller.isMicrophoneMuted
+                              ? Icons.mic_off
+                              : Icons.mic,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      FloatingActionButton(
                         backgroundColor: Colors.red,
                         onPressed: () {
                           controller.leave();
                         },
                         child: const Icon(
                           Icons.call_end,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      FloatingActionButton(
+                        backgroundColor: Colors.grey[600],
+                        onPressed: () {
+                          controller.turnCamera();
+                        },
+                        child: const Icon(
+                          Icons.switch_camera,
                           color: Colors.white,
                         ),
                       ),

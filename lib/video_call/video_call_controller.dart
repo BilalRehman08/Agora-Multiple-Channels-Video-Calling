@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
 class VideoCallController extends GetxController {
+  bool isMicrophoneMuted = false;
   String serverUrl =
       "https://agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   String newToken = "";
@@ -68,6 +69,23 @@ class VideoCallController extends GetxController {
       options: options,
     );
     // Register the event handler
+  }
+
+  microphoneMute() async {
+    if (isMicrophoneMuted) {
+      await agoraEngine.muteLocalAudioStream(false);
+      isMicrophoneMuted = false;
+      update();
+    } else {
+      await agoraEngine.muteLocalAudioStream(true);
+      isMicrophoneMuted = true;
+      update();
+    }
+  }
+
+  turnCamera() async {
+    await agoraEngine.switchCamera();
+    update();
   }
 
   void leave() async {
