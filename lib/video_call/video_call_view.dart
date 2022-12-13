@@ -2,6 +2,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_ui_kit/video_call/video_call_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:agora_ui_kit/main.dart';
 
 class VideoCallView extends StatelessWidget {
   const VideoCallView({super.key});
@@ -62,7 +63,7 @@ class VideoCallView extends StatelessWidget {
   Widget localPreview({required VideoCallController controller}) {
     return AgoraVideoView(
         controller: VideoViewController(
-      rtcEngine: controller.agoraEngine,
+      rtcEngine: agoraEngine,
       canvas: const VideoCanvas(uid: 0),
     ));
   }
@@ -71,7 +72,7 @@ class VideoCallView extends StatelessWidget {
   Widget remoteVideo({required VideoCallController controller}) {
     return AgoraVideoView(
       controller: VideoViewController.remote(
-        rtcEngine: controller.agoraEngine,
+        rtcEngine: agoraEngine,
         canvas: VideoCanvas(uid: controller.remoteUid),
         connection: RtcConnection(channelId: controller.channelName),
       ),

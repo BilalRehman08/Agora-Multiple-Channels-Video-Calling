@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../main.dart';
+
 class UsersListView extends StatelessWidget {
   const UsersListView({super.key});
 
@@ -32,7 +34,8 @@ class UsersListView extends StatelessWidget {
             if (channelData["channelName"] == "") {
               if (videoCallController.isJoined) {
                 Get.snackbar("Leaving", "Channel");
-                videoCallController.agoraEngine.leaveChannel();
+                agoraEngine.leaveChannel();
+
                 videoCallController.isJoined = false;
               }
 

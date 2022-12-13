@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_ui_kit/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
 class VideoCallController extends GetxController {
-  String appId = "0efec5e57b8f47dabffb86ed5e5a3d5d";
   String serverUrl =
       "https://agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   String newToken = "";
@@ -22,7 +21,6 @@ class VideoCallController extends GetxController {
   final Stream<QuerySnapshot> usersStream =
       FirebaseFirestore.instance.collection('users').snapshots();
 
-  late RtcEngine agoraEngine;
   int remoteUid = 0;
   Future<void> setupVideoSDKEngine() async {
     await FirebaseFirestore.instance
@@ -33,6 +31,14 @@ class VideoCallController extends GetxController {
       remoteUid = value.data()!['remoteid'];
     });
 
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.email)
+        .get()
+        .then((value) {
+      channelName = value.data()!['channelName'];
+    });
+
     String url = '$serverUrl/rtc/$channelName/1/uid/$currentUserId/?expiry=300';
     final response = await http.get(Uri.parse(url));
     newToken = jsonDecode(response.body)["rtcToken"];
@@ -41,8 +47,6 @@ class VideoCallController extends GetxController {
     await [Permission.microphone, Permission.camera].request();
 
     //create an instance of the Agora engine
-    agoraEngine = createAgoraRtcEngine();
-    await agoraEngine.initialize(RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
 
@@ -52,7 +56,7 @@ class VideoCallController extends GetxController {
     );
     agoraEngine.registerEventHandler(RtcEngineEventHandler(
       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-        Get.snackbar("title", "onJoinChannelSuccess");
+        // Get.snackbar("title", "onJoinChannelSuccess");
         isJoined = true;
         update();
       },
@@ -68,9 +72,6 @@ class VideoCallController extends GetxController {
 
   void leave() async {
     Get.snackbar("title", "onLeave");
-
-    await agoraEngine.leaveChannel();
-    isJoined = false;
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -122,6 +123,8 @@ class VideoCallController extends GetxController {
       'channelName': '',
     });
 
+    await agoraEngine.leaveChannel();
+    isJoined = false;
     // remoteUid = null;
     // // channelName = '';
     update();
