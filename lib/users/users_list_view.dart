@@ -33,9 +33,9 @@ class UsersListView extends StatelessWidget {
             Map channelData = callSnapShot.data!.data() as Map;
             if (channelData["channelName"] == "") {
               if (videoCallController.isJoined) {
-                Get.snackbar("Leaving", "Channel");
-                agoraEngine.leaveChannel();
+                // Get.snackbar("Leaving", "Channel");
 
+                agoraEngine.leaveChannel();
                 videoCallController.isJoined = false;
               }
 
