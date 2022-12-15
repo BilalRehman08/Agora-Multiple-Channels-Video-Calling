@@ -149,8 +149,11 @@ class VideoCallController extends GetxController {
   }
 
   @override
-  void onClose() async {
-    leave();
+  void onClose() {
+    if (isJoined) {
+      leave();
+      isJoined = false;
+    }
     super.onClose();
   }
 }
