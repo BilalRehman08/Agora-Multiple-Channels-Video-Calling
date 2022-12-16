@@ -47,7 +47,8 @@ class RecentChatScreen extends StatelessWidget {
                               name: snapshot.data["name"],
                               email: snapshot.data["email"],
                             );
-                            Get.to(()=>ChatHomeScreen());
+                            controller.currentChatRoomId = document.id;
+                            Get.to(()=>const ChatHomeScreen());
                           },
                         );
                       } else {
