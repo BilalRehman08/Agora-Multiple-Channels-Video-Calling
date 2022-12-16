@@ -1,6 +1,8 @@
+import 'package:agora_ui_kit/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../users/users_list_view.dart';
 import '../utils/custom_colors.dart';
 
 class HomeView extends StatelessWidget {
@@ -9,17 +11,10 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorsConstant.forebackgroundColor,
-        title: const Center(
-          child: Text(
-            "ALFGROWTH",
-            style: TextStyle(
-              letterSpacing: 4,
-              color: Colors.white,
-              fontSize: 24,
-            ),
-          ),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: CustomAppBar(
+          title: "ALFGROWTH",
         ),
       ),
       backgroundColor: ColorsConstant.backgroundColor,
@@ -33,7 +28,9 @@ class HomeView extends StatelessWidget {
                 buttonCard(
                   text: "VIDEO\nMONITORING",
                   icon: Icons.video_call,
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(const UsersListView());
+                  },
                   height: 0.3,
                   width: 0.225,
                 ),

@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/utils/custom_colors.dart';
 import 'package:agora_ui_kit/video_call/video_call_controller.dart';
 import 'package:agora_ui_kit/video_call/video_call_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../main.dart';
+import '../widgets/custom_appbar.dart';
 
 class UsersListView extends StatelessWidget {
   const UsersListView({super.key});
@@ -16,6 +18,13 @@ class UsersListView extends StatelessWidget {
     VideoCallController videoCallController =
         Get.isRegistered() ? Get.find() : Get.put(VideoCallController());
     return Scaffold(
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: CustomAppBar(
+          title: "VIDEO MONITORING",
+        ),
+      ),
+      backgroundColor: ColorsConstant.backgroundColor,
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
@@ -61,16 +70,28 @@ class UsersListView extends StatelessWidget {
                         }
 
                         return Padding(
-                            padding: const EdgeInsets.only(bottom: 5.0),
+                            padding: const EdgeInsets.only(
+                                top: 20.0, right: 20, left: 20),
                             child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
                               leading: const CircleAvatar(
                                   backgroundColor: Colors.red),
-                              tileColor: Colors.grey[200],
-                              title: Text(snapshot.data!.docs[index]['name']),
+                              tileColor: ColorsConstant.forebackgroundColor,
+                              title: Text(snapshot.data!.docs[index]['name'],
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 2,
+                                      fontWeight: FontWeight.bold)),
                               subtitle: Text(
-                                  "${snapshot.data!.docs[index]['email']}"),
+                                "${snapshot.data!.docs[index]['email']}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
                               trailing: IconButton(
-                                  icon: const Icon(Icons.video_call),
+                                  icon: const Icon(
+                                    Icons.video_call,
+                                    color: Colors.white,
+                                  ),
                                   onPressed: () async {
                                     videoCallController.remoteUserEmail =
                                         snapshot.data!.docs[index]['email'];

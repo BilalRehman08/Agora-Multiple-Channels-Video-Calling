@@ -1,4 +1,5 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_ui_kit/login/login_view.dart';
 import 'package:agora_ui_kit/signup/signup_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const GetMaterialApp(
-      home: SignUpView(),
+      debugShowCheckedModeBanner: false,
+      home: LoginView(),
     );
   }
 }
