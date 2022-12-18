@@ -7,26 +7,79 @@ import 'package:get/get.dart';
 
 class ChatController extends GetxController {
   RemoteUser? remoteUser;
-  String? currentChatRoomId;
+  RxString currentChatRoomId = "".obs;
   TextEditingController chatMessageController = TextEditingController();
   User currentUser = FirebaseAuth.instance.currentUser!;
+  List<RemoteUser> allUsers = [];
+  RxList<RemoteUser> searchedUsers = <RemoteUser>[].obs;
 
-  sendMessage() {
+  sendMessage() async {
     if (chatMessageController.text.isNotEmpty) {
       Message message = Message(
           senderEmail: currentUser.email!,
           content: chatMessageController.text,
           time: DateTime.now());
       chatMessageController.clear();
-      FirebaseFirestore.instance
+      if (currentChatRoomId.isEmpty) {
+        await FirebaseFirestore.instance.collection("chatRoom").add({
+          "users": [currentUser.email, remoteUser!.email],
+          "lastMessage": message.content
+        }).then((value) {
+          currentChatRoomId.value = value.id;
+        });
+      }
+      await FirebaseFirestore.instance
           .collection("chatRoom")
-          .doc(currentChatRoomId)
+          .doc(currentChatRoomId.value)
           .collection("chats")
           .add(message.toJson());
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("chatRoom")
-          .doc(currentChatRoomId)
+          .doc(currentChatRoomId.value)
           .update({"lastMessage": message.content});
+    }
+  }
+
+  Future<void> getChatRoomIDIfExist() async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection("chatRoom")
+        .where("users", arrayContains: currentUser.email)
+        .get();
+    for (DocumentSnapshot<Map<String, dynamic>> document
+        in querySnapshot.docs) {
+      Map docData = document.data() as Map;
+      if (docData["users"][0] == remoteUser!.email ||
+          docData["users"][1] == remoteUser!.email) {
+        currentChatRoomId.value = document.id;
+        break;
+      }
+    }
+  }
+
+  Future<void> fetchAllUsers() async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection("users")
+        .where("email", isNotEqualTo: currentUser.email)
+        .get();
+    for (DocumentSnapshot<Map<String, dynamic>> document
+        in querySnapshot.docs) {
+      Map docData = document.data() as Map;
+      RemoteUser remoteUser = RemoteUser(
+          id: docData["id"], name: docData["name"], email: docData["email"]);
+      allUsers.add(remoteUser);
+    }
+  }
+
+  void searchUser(String value) {
+    if (value.isNotEmpty) {
+      searchedUsers.value = allUsers
+          .where((element) =>
+              element.name.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    } else {
+      searchedUsers.value = [];
     }
   }
 }

@@ -11,105 +11,104 @@ class ChatHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     ChatController controller =
         Get.isRegistered() ? Get.find() : Get.put(ChatController());
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        controller.currentChatRoomId.value = "";
+        return true;
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {
-                controller.currentChatRoomId = null;
+                controller.currentChatRoomId.value = "";
                 Get.back();
               },
               icon: const Icon(Icons.arrow_back_ios_new_rounded)),
           title: Text(controller.remoteUser!.name),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            controller.currentChatRoomId = null;
-            return true;
-          },
-          child: Scaffold(
-            body: Column(
-              children: [
-                Obx(() => controller.currentChatRoomId != null
-                    ? Expanded(
-                        child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection("chatRoom")
-                              .doc(controller.currentChatRoomId!.value)
-                              .collection("chats")
-                              .orderBy("time", descending: true)
-                              .snapshots(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                                  snapshot) {
-                            if (snapshot.hasData) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8, right: 8, bottom: 20),
-                                child: ListView(
-                                  reverse: true,
-                                  children: snapshot.data!.docs.map<Widget>(
-                                      (QueryDocumentSnapshot documentSnapshot) {
-                                    Message message = Message.fromJson(
-                                        documentSnapshot.data()
-                                            as Map<String, dynamic>);
-                                    if (message.senderEmail ==
-                                        controller.currentUser.email) {
-                                      return myChatContainer(message);
-                                    } else {
-                                      return otherPeopleChatContainer(message);
-                                    }
-                                  }).toList(),
-                                ),
-                              );
-                            } else {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                          },
-                        ),
-                      )
-                    : const SizedBox()),
-                Row(
-                  children: [
-                    const Icon(Icons.camera_alt_outlined, color: Colors.yellow),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Container(
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: Colors.yellow.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: TextFormField(
-                          controller: controller.chatMessageController,
-                          decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.only(left: 20, top: 10),
-                            border: InputBorder.none,
-                            hintText: "Write a comment",
-                            hintStyle: TextStyle(
-                              color: Colors.black.withOpacity(0.7),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+        body: Column(
+          children: [
+            Obx(() => controller.currentChatRoomId.isNotEmpty
+                ? Expanded(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("chatRoom")
+                          .doc(controller.currentChatRoomId.value)
+                          .collection("chats")
+                          .orderBy("time", descending: true)
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                              snapshot) {
+                        if (snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                left: 8, right: 8, bottom: 20),
+                            child: ListView(
+                              reverse: true,
+                              children: snapshot.data!.docs.map<Widget>(
+                                  (QueryDocumentSnapshot documentSnapshot) {
+                                Message message = Message.fromJson(
+                                    documentSnapshot.data()
+                                        as Map<String, dynamic>);
+                                if (message.senderEmail ==
+                                    controller.currentUser.email) {
+                                  return myChatContainer(message);
+                                } else {
+                                  return otherPeopleChatContainer(message);
+                                }
+                              }).toList(),
                             ),
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  controller.sendMessage();
-                                },
-                                icon: const Icon(Icons.send_outlined,
-                                    color: Colors.yellow)),
-                          ),
+                          );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    ),
+                  )
+                : const Spacer()),
+            Row(
+              children: [
+                const Icon(Icons.camera_alt_outlined, color: Colors.yellow),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.yellow.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextFormField(
+                      controller: controller.chatMessageController,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.only(left: 20, top: 10),
+                        border: InputBorder.none,
+                        hintText: "Write a comment",
+                        hintStyle: TextStyle(
+                          color: Colors.black.withOpacity(0.7),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
+                        suffixIcon: IconButton(
+                            onPressed: () async {
+                              await controller.sendMessage();
+                            },
+                            icon: const Icon(Icons.send_outlined,
+                                color: Colors.yellow)),
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 10)
+                    ),
+                  ),
+                )
               ],
             ),
-          ),
-        ));
+            const SizedBox(height: 10)
+          ],
+        ),
+      ),
+    );
   }
 
   myChatContainer(Message message) {
