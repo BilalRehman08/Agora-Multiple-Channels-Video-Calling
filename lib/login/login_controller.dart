@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/chats/selection_msg_video.dart';
 import 'package:agora_ui_kit/users/users_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -9,16 +10,16 @@ class LoginController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   loginUser() async {
     try {
-      // if (kDebugMode) {
-      //   emailController.text = 'test@gmail.com';
-      //   passwordController.text = 'test123';
-      // }
+      if (kDebugMode) {
+        emailController.text = 'huzaifa@gmail.com';
+        passwordController.text = 'huzaifa123';
+      }
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      Get.to(const UsersListView());
+      Get.to(const SelectionMsgVideo());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
