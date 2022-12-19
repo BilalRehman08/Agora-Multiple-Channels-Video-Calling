@@ -1,5 +1,6 @@
 import 'package:agora_ui_kit/chats/chat_controlller.dart';
 import 'package:agora_ui_kit/chats/models/message_model.dart';
+import 'package:agora_ui_kit/utils/custom_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,14 +15,17 @@ class ChatHomeScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         controller.currentChatRoomId.value = "";
+        controller.chatMessageController.clear();
         return true;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorsConstant.backgroundColor,
         appBar: AppBar(
+          backgroundColor: ColorsConstant.forebackgroundColor,
           leading: IconButton(
               onPressed: () {
                 controller.currentChatRoomId.value = "";
+                controller.chatMessageController.clear();
                 Get.back();
               },
               icon: const Icon(Icons.arrow_back_ios_new_rounded)),
@@ -77,15 +81,15 @@ class ChatHomeScreen extends StatelessWidget {
                   )
                 : const Spacer()),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(width: 10),
-                const Icon(Icons.camera_alt_outlined, color: Colors.black),
+                Icon(Icons.camera_alt_outlined, color: ColorsConstant.yellow),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.yellow.withOpacity(0.2),
+                      color: ColorsConstant.yellow,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: ConstrainedBox(
@@ -111,7 +115,8 @@ class ChatHomeScreen extends StatelessWidget {
                     onPressed: () async {
                       await controller.sendMessage();
                     },
-                    icon: const Icon(Icons.send_outlined, color: Colors.black))
+                    icon:
+                        Icon(Icons.send_outlined, color: ColorsConstant.yellow))
               ],
             ),
             const SizedBox(height: 10)
@@ -135,7 +140,8 @@ class ChatHomeScreen extends StatelessWidget {
                 constraints:
                     BoxConstraints(maxWidth: Get.width * 0.8, minWidth: 90),
                 decoration: BoxDecoration(
-                    color: Colors.yellow.withOpacity(0.3),
+                    color: Colors.white,
+                    border: Border.all(color: ColorsConstant.yellow),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(20),
                       topLeft: Radius.circular(20),
@@ -185,7 +191,8 @@ class ChatHomeScreen extends StatelessWidget {
               maxWidth: Get.width * 0.8,
             ),
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: ColorsConstant.forebackgroundColor,
+                border: Border.all(color: Colors.grey[600]!),
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(20),
                   topLeft: Radius.circular(20),
@@ -195,7 +202,7 @@ class ChatHomeScreen extends StatelessWidget {
             child: Text(
               message.content,
               style: const TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 14,
               ),
             ),

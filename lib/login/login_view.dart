@@ -79,18 +79,18 @@ class LoginView extends StatelessWidget {
                           ),
                           child: TextButton(
                             onPressed: () {
-                              // if (loginController
-                              //         .emailController.text.isEmpty ||
-                              //     loginController
-                              //         .passwordController.text.isEmpty) {
-                              //   Get.snackbar(
-                              //     "Error",
-                              //     "Please fill all fields",
-                              //   );
-                              // } else {
-                              //   loginController.loginUser();
-                              // }
-                              loginController.loginUser();
+                              if (loginController
+                                      .emailController.text.isEmpty ||
+                                  loginController
+                                      .passwordController.text.isEmpty) {
+                                Get.snackbar(
+                                  "Error",
+                                  "Please fill all fields",
+                                );
+                              } else {
+                                loginController.loginUser();
+                              }
+                              // loginController.loginUser();
                             },
                             child: Text("Login",
                                 style: TextStyle(

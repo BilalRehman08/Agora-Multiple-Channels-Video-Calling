@@ -105,6 +105,7 @@ buttonCard({
         width: Get.width * width,
         height: Get.height * height,
         decoration: BoxDecoration(
+            border: Border.all(color: Colors.white),
             color: ColorsConstant.forebackgroundColor,
             borderRadius: BorderRadius.circular(20)),
         child: Column(

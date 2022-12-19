@@ -74,6 +74,10 @@ class UsersListView extends StatelessWidget {
                                 top: 20.0, right: 20, left: 20),
                             child: ListTile(
                               shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.grey[600]!,
+                                    width: 1,
+                                  ),
                                   borderRadius: BorderRadius.circular(25)),
                               leading: const CircleAvatar(
                                   backgroundColor: Colors.red),

@@ -1,5 +1,6 @@
 import 'package:agora_ui_kit/chats/chat_controlller.dart';
 import 'package:agora_ui_kit/chats/chat_screen.dart';
+import 'package:agora_ui_kit/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,9 @@ class ChatSearchScreen extends StatelessWidget {
     ChatController controller =
         Get.isRegistered() ? Get.find() : Get.put(ChatController());
     return Scaffold(
+      backgroundColor: ColorsConstant.backgroundColor,
       appBar: AppBar(
+        backgroundColor: ColorsConstant.forebackgroundColor,
         title: const Text("Search"),
       ),
       body: Column(
@@ -40,14 +43,32 @@ class ChatSearchScreen extends StatelessWidget {
               () => ListView.builder(
                 itemCount: controller.searchedUsers.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(controller.searchedUsers[index].name),
-                    subtitle: Text(controller.searchedUsers[index].email),
-                    onTap: () {
-                      controller.remoteUser = controller.searchedUsers[index];
-                      controller.getChatRoomIDIfExist();
-                      Get.to(() => const ChatHomeScreen());
-                    },
+                  return Container(
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 15, right: 15),
+                    child: ListTile(
+                      tileColor: ColorsConstant.forebackgroundColor,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.grey[600]!,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      title: Text(
+                        controller.searchedUsers[index].name,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        controller.searchedUsers[index].email,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        controller.remoteUser = controller.searchedUsers[index];
+                        controller.getChatRoomIDIfExist();
+                        Get.to(() => const ChatHomeScreen());
+                      },
+                    ),
                   );
                 },
               ),
