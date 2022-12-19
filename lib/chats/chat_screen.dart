@@ -10,7 +10,7 @@ class ChatHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ChatController controller =
-        Get.isRegistered() ? Get.find() : Get.put(ChatController());
+      Get.isRegistered() ? Get.find() : Get.put(ChatController());
     return WillPopScope(
       onWillPop: () async {
         controller.currentChatRoomId.value = "";
@@ -42,25 +42,30 @@ class ChatHomeScreen extends StatelessWidget {
                           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                               snapshot) {
                         if (snapshot.hasData) {
+                          List<QueryDocumentSnapshot> docs =
+                              snapshot.data!.docs;
                           return Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8, right: 8, bottom: 20),
-                            child: ListView(
-                              reverse: true,
-                              children: snapshot.data!.docs.map<Widget>(
-                                  (QueryDocumentSnapshot documentSnapshot) {
-                                Message message = Message.fromJson(
-                                    documentSnapshot.data()
-                                        as Map<String, dynamic>);
-                                if (message.senderEmail ==
-                                    controller.currentUser.email) {
-                                  return myChatContainer(message);
-                                } else {
-                                  return otherPeopleChatContainer(message);
-                                }
-                              }).toList(),
-                            ),
-                          );
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, bottom: 20),
+                              child: ListView.builder(
+                                  reverse: true,
+                                  itemCount: docs.length,
+                                  itemBuilder: (context, index) {
+                                    Message message = Message.fromJson(
+                                        docs[index].data()
+                                            as Map<String, dynamic>);
+                                    message.uid = docs[index].id;
+                                    if (message.senderEmail ==
+                                        controller.currentUser.email) {
+                                      return myChatContainer(message, index);
+                                    } else {
+                                      message.updateReadStatus(
+                                          controller.currentChatRoomId,
+                                          docs[index].id);
+                                      return otherPeopleChatContainer(
+                                          message, index);
+                                    }
+                                  }));
                         } else {
                           return const Center(
                               child: CircularProgressIndicator());
@@ -70,38 +75,41 @@ class ChatHomeScreen extends StatelessWidget {
                   )
                 : const Spacer()),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Icon(Icons.camera_alt_outlined, color: Colors.yellow),
+                const SizedBox(width: 10),
+                const Icon(Icons.camera_alt_outlined, color: Colors.black),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Container(
-                    height: 42,
                     decoration: BoxDecoration(
                       color: Colors.yellow.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: TextFormField(
-                      controller: controller.chatMessageController,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            const EdgeInsets.only(left: 20, top: 10),
-                        border: InputBorder.none,
-                        hintText: "Write a comment",
-                        hintStyle: TextStyle(
-                          color: Colors.black.withOpacity(0.7),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: Get.height * 0.17),
+                      child: TextField(
+                        maxLines: null,
+                        controller: controller.chatMessageController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(10),
+                          border: InputBorder.none,
+                          hintText: "Write a comment",
+                          hintStyle: TextStyle(
+                            color: Colors.black.withOpacity(0.7),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        suffixIcon: IconButton(
-                            onPressed: () async {
-                              await controller.sendMessage();
-                            },
-                            icon: const Icon(Icons.send_outlined,
-                                color: Colors.yellow)),
                       ),
                     ),
                   ),
-                )
+                ),
+                IconButton(
+                    onPressed: () async {
+                      await controller.sendMessage();
+                    },
+                    icon: const Icon(Icons.send_outlined, color: Colors.black))
               ],
             ),
             const SizedBox(height: 10)
@@ -111,101 +119,88 @@ class ChatHomeScreen extends StatelessWidget {
     );
   }
 
-  myChatContainer(Message message) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+  myChatContainer(Message message, index) {
+    return Obx(() => Container(
+      margin: const EdgeInsets.only(top: 15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
-            padding: const EdgeInsets.only(left: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
-                  constraints: BoxConstraints(
-                    maxWidth: Get.width * 0.6,
-                  ),
-                  decoration: BoxDecoration(
-                      color: Colors.yellow.withOpacity(0.2),
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(24),
-                        topLeft: Radius.circular(24),
-                        bottomLeft: Radius.circular(24),
-                        bottomRight: Radius.circular(4),
-                      )),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0),
-                    child: Text(
-                      message.content,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                constraints: BoxConstraints(
+                    maxWidth: Get.width * 0.8, minWidth: 90),
+                decoration: BoxDecoration(
+                    color: Colors.yellow.withOpacity(0.3),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(4),
+                    )),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    message.content,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
+              ),
+              Positioned(
+                right: 25,
+                bottom: 3,
+                child: Text(
                   "${message.time.hour}:${message.time.minute} ${message.time.hour > 12 ? "PM" : "AM"}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 12,
                   ),
-                )
-              ],
-            ),
-          )
+                ),
+              ),
+              Icon(Icons.done_all,
+                  color: message.isRead ? Colors.blue : Colors.grey,
+                  size: 20)
+            ],
+          ),
         ],
       ),
-    );
+    ));
   }
 
-  otherPeopleChatContainer(Message message) {
-    return Container(
-      padding: const EdgeInsets.only(top: 15.0),
+  otherPeopleChatContainer(Message message, index) {
+    return Obx(() => Container(
+      margin: const EdgeInsets.only(top: 15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
+            padding: const EdgeInsets.all(15),
             constraints: BoxConstraints(
-              maxWidth: Get.width * 0.6,
+              maxWidth: Get.width * 0.8,
             ),
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withOpacity(0.3),
                 borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(24),
-                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
                   bottomLeft: Radius.circular(4),
-                  bottomRight: Radius.circular(24),
+                  bottomRight: Radius.circular(20),
                 )),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 30.0),
-              child: Text(
-                message.content,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                ),
+            child: Text(
+              message.content,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 14,
               ),
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            "${message.time.hour}:${message.time.minute} ${message.time.hour > 12 ? "PM" : "AM"}",
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-            ),
-          )
         ],
       ),
-    );
+    ));
   }
 }

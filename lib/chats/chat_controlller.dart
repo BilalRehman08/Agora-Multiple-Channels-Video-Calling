@@ -16,10 +16,14 @@ class ChatController extends GetxController {
   sendMessage() async {
     if (chatMessageController.text.isNotEmpty) {
       Message message = Message(
-          senderEmail: currentUser.email!,
-          content: chatMessageController.text,
-          time: DateTime.now());
+        senderEmail: currentUser.email!,
+        content: chatMessageController.text,
+        time: DateTime.now(),
+        isRead: false,
+      );
       chatMessageController.clear();
+
+      // if chat room id is empty then create a new chat room
       if (currentChatRoomId.isEmpty) {
         await FirebaseFirestore.instance.collection("chatRoom").add({
           "users": [currentUser.email, remoteUser!.email],
@@ -28,11 +32,14 @@ class ChatController extends GetxController {
           currentChatRoomId.value = value.id;
         });
       }
+      // add message to chat room
       await FirebaseFirestore.instance
           .collection("chatRoom")
           .doc(currentChatRoomId.value)
           .collection("chats")
           .add(message.toJson());
+
+      // update last message in chat room
       await FirebaseFirestore.instance
           .collection("chatRoom")
           .doc(currentChatRoomId.value)

@@ -54,7 +54,11 @@ class RecentChatScreen extends StatelessWidget {
                       if (snapshot.hasData) {
                         return ListTile(
                           title: Text(snapshot.data["name"]),
-                          subtitle: Text(docData["lastMessage"]),
+                          subtitle: Text(
+                            docData["lastMessage"],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           onTap: () {
                             controller.remoteUser = RemoteUser(
                               id: snapshot.data["id"],
