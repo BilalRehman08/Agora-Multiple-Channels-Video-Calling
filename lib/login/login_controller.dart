@@ -1,5 +1,4 @@
 import 'package:agora_ui_kit/home/home_view.dart';
-import 'package:agora_ui_kit/users/users_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +10,8 @@ class LoginController extends GetxController {
   loginUser() async {
     try {
       if (kDebugMode) {
-        emailController.text = 'test@gmail.com';
-        passwordController.text = 'test123';
+        emailController.text = 'huzaifa@gmail.com';
+        passwordController.text = 'huzaifa123';
       }
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(

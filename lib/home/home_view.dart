@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/chats/recent_chat_screen.dart';
 import 'package:agora_ui_kit/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,7 +38,9 @@ class HomeView extends StatelessWidget {
                 buttonCard(
                   text: "CHAT",
                   icon: Icons.chat,
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(const RecentChatScreen());
+                  },
                   height: 0.3,
                   width: 0.225,
                 ),
