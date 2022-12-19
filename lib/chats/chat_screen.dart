@@ -59,9 +59,11 @@ class ChatHomeScreen extends StatelessWidget {
                                         controller.currentUser.email) {
                                       return myChatContainer(message, index);
                                     } else {
-                                      message.updateReadStatus(
-                                          controller.currentChatRoomId,
-                                          docs[index].id);
+                                      if (message.isRead == false) {
+                                        message.updateReadStatus(
+                                            controller.currentChatRoomId,
+                                            docs[index].id);
+                                      }
                                       return otherPeopleChatContainer(
                                           message, index);
                                     }
