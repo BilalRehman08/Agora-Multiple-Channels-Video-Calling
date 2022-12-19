@@ -69,7 +69,7 @@ class LoginView extends StatelessWidget {
                                     fontWeight: FontWeight.bold)),
                           ],
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Container(
                           height: 40,
                           width: double.infinity,
@@ -79,17 +79,18 @@ class LoginView extends StatelessWidget {
                           ),
                           child: TextButton(
                             onPressed: () {
-                              if (loginController
-                                      .emailController.text.isEmpty ||
-                                  loginController
-                                      .passwordController.text.isEmpty) {
-                                Get.snackbar(
-                                  "Error",
-                                  "Please fill all fields",
-                                );
-                              } else {
-                                loginController.loginUser();
-                              }
+                              // if (loginController
+                              //         .emailController.text.isEmpty ||
+                              //     loginController
+                              //         .passwordController.text.isEmpty) {
+                              //   Get.snackbar(
+                              //     "Error",
+                              //     "Please fill all fields",
+                              //   );
+                              // } else {
+                              //   loginController.loginUser();
+                              // }
+                              loginController.loginUser();
                             },
                             child: Text("Login",
                                 style: TextStyle(

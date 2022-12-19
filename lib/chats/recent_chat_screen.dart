@@ -3,10 +3,7 @@ import 'package:agora_ui_kit/chats/chat_screen.dart';
 import 'package:agora_ui_kit/chats/models/remote_user_model.dart';
 import 'package:agora_ui_kit/chats/search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 
 class RecentChatScreen extends StatelessWidget {
@@ -24,6 +21,7 @@ class RecentChatScreen extends StatelessWidget {
               icon: const Icon(Icons.search),
               onPressed: () async {
                 await controller.fetchAllUsers();
+                controller.searchedUsers.clear();
                 Get.to(() => const ChatSearchScreen());
               },
             )
@@ -70,7 +68,7 @@ class RecentChatScreen extends StatelessWidget {
                           },
                         );
                       } else {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: SizedBox());
                       }
                     },
                   );

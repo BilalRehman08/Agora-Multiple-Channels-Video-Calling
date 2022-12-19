@@ -1,7 +1,5 @@
 import 'package:agora_ui_kit/chats/chat_controlller.dart';
 import 'package:agora_ui_kit/chats/chat_screen.dart';
-import 'package:agora_ui_kit/chats/models/remote_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,6 +45,7 @@ class ChatSearchScreen extends StatelessWidget {
                     subtitle: Text(controller.searchedUsers[index].email),
                     onTap: () {
                       controller.remoteUser = controller.searchedUsers[index];
+                      controller.getChatRoomIDIfExist();
                       Get.to(() => const ChatHomeScreen());
                     },
                   );

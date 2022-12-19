@@ -70,6 +70,7 @@ class ChatController extends GetxController {
         .collection("users")
         .where("email", isNotEqualTo: currentUser.email)
         .get();
+    allUsers.clear();
     for (DocumentSnapshot<Map<String, dynamic>> document
         in querySnapshot.docs) {
       Map docData = document.data() as Map;
