@@ -1,3 +1,4 @@
+import 'package:agora_ui_kit/activity/activity_users_view.dart';
 import 'package:agora_ui_kit/chats/recent_chat_screen.dart';
 import 'package:agora_ui_kit/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,9 @@ class HomeView extends StatelessWidget {
                 buttonCard(
                   text: "FOOD/ACTIVITY\nRECORD",
                   icon: Icons.dataset,
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(const ActivityView());
+                  },
                   height: 0.3,
                   width: 0.225,
                 ),
