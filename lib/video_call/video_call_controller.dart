@@ -89,7 +89,7 @@ class VideoCallController extends GetxController {
   }
 
   void leave() async {
-    Get.snackbar("title", "onLeave");
+    // Get.snackbar("title", "onLeave");
 
     await FirebaseFirestore.instance
         .collection('users')
