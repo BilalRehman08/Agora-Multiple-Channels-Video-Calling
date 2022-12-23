@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ActivityController extends GetxController {
+  TextEditingController descriptionController = TextEditingController();
   final DateTime initialDate = DateTime.now();
 
   Rx<String> datee = 'DD/MM/YYYY'.obs;
@@ -43,6 +44,32 @@ class ActivityController extends GetxController {
   Future getRecord({required userEmail}) async {
     var data =
         FirebaseFirestore.instance.collection('users').doc(userEmail).get();
+    update();
     return data;
+  }
+
+  addRecord(
+    context, {
+    required userEmail,
+    required activity,
+    required description,
+    required checkedby,
+    required createdate,
+    required createtime,
+  }) async {
+    await FirebaseFirestore.instance.collection('users').doc(userEmail).update({
+      'activityrecord': FieldValue.arrayUnion([
+        {
+          'activity': activity,
+          'description': description,
+          'checkedby': checkedby,
+          'createdate': createdate,
+          'createtime': createtime,
+        }
+      ])
+    }).then((value) {
+      Navigator.of(context).pop();
+    });
+    update();
   }
 }

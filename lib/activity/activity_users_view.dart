@@ -45,6 +45,7 @@ class ActivityView extends StatelessWidget {
                 child: ListTile(
                   onTap: () {
                     Get.to(ActivtyRecord(
+                      currentUserEmail: controller.currentUser.email as String,
                       userEmail: snapshot.data!.docs[index]['email'],
                     ));
                   },

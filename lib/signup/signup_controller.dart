@@ -50,6 +50,7 @@ class SignUpController extends GetxController {
           'channelName': '',
           'remoteid': 0,
           'remoteemail': '',
+          'activityrecord': [],
           // 42
         })
         .then((value) => print("User Added"))

@@ -1,12 +1,15 @@
 import 'package:agora_ui_kit/activity/activity_controller.dart';
 import 'package:agora_ui_kit/utils/custom_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/custom_appbar.dart';
 
 class ActivtyRecord extends StatelessWidget {
+  final String currentUserEmail;
   final String userEmail;
-  const ActivtyRecord({super.key, required this.userEmail});
+  const ActivtyRecord(
+      {super.key, required this.userEmail, required this.currentUserEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -23,65 +26,69 @@ class ActivtyRecord extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-            future: activityController.getRecord(userEmail: userEmail),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot.data['activityrecord'].length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          tileColor: ColorsConstant.forebackgroundColor,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                color: Colors.grey[600]!,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(25)),
-                          title: Text(
-                            "${snapshot.data['activityrecord'][index]['activity']}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 20),
+        child: GetBuilder<ActivityController>(builder: (_) {
+          return FutureBuilder(
+              future: activityController.getRecord(userEmail: userEmail),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      itemCount: snapshot.data['activityrecord'].length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            tileColor: ColorsConstant.forebackgroundColor,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.grey[600]!,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(25)),
+                            title: Text(
+                              "${snapshot.data['activityrecord'][index]['activity']}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "Description : ${snapshot.data['activityrecord'][index]['description']}",
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 15)),
+                                Text(
+                                    "Check by : ${snapshot.data['activityrecord'][index]['checkedby']}",
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 15)),
+                              ],
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                    "${snapshot.data['activityrecord'][index]['createdate']}",
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                                Text(
+                                    "${snapshot.data['activityrecord'][index]['createtime']}",
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              ],
+                            ),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                  "Description : ${snapshot.data['activityrecord'][index]['description']}",
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 15)),
-                              Text(
-                                  "Check by : ${snapshot.data['activityrecord'][index]['checkedby']}",
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 15)),
-                            ],
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                  "${snapshot.data['activityrecord'][index]['createdate']}",
-                                  style: const TextStyle(color: Colors.white)),
-                              Text(
-                                  "${snapshot.data['activityrecord'][index]['createtime']}",
-                                  style: const TextStyle(color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+                        );
+                      });
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              });
+        }),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorsConstant.yellow,
@@ -170,9 +177,11 @@ class ActivtyRecord extends StatelessWidget {
                           color: ColorsConstant.secondary,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const TextField(
+                        child: TextField(
+                            controller:
+                                activityController.descriptionController,
                             maxLines: 5, //or null
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.all(10),
                               hintText: "Enter your message",
@@ -192,8 +201,16 @@ class ActivtyRecord extends StatelessWidget {
                           ColorsConstant.yellow, // Background color
                     ),
                     child: const Text('SUBMIT'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
+                    onPressed: () async {
+                      activityController.addRecord(context,
+                          userEmail: userEmail,
+                          activity:
+                              activityController.activitySelectedItem.value,
+                          description:
+                              activityController.descriptionController.text,
+                          checkedby: currentUserEmail,
+                          createdate: activityController.datee.value,
+                          createtime: activityController.timee.value);
                     },
                   ),
                 ],
