@@ -69,6 +69,7 @@ class ActivityController extends GetxController {
       ])
     }).then((value) {
       Navigator.of(context).pop();
+      descriptionController.clear();
     });
     update();
   }
