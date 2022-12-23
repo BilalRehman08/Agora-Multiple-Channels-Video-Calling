@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,5 +38,11 @@ class ActivityController extends GetxController {
       print(picked.hour);
       timee.value = " ${picked.hour}:${picked.minute}";
     }
+  }
+
+  Future getRecord({required userEmail}) async {
+    var data =
+        FirebaseFirestore.instance.collection('users').doc(userEmail).get();
+    return data;
   }
 }

@@ -44,7 +44,9 @@ class ActivityView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
                 child: ListTile(
                   onTap: () {
-                    Get.to(const ActivtyRecord());
+                    Get.to(ActivtyRecord(
+                      userEmail: snapshot.data!.docs[index]['email'],
+                    ));
                   },
                   shape: RoundedRectangleBorder(
                       side: BorderSide(

@@ -2,11 +2,11 @@ import 'package:agora_ui_kit/activity/activity_controller.dart';
 import 'package:agora_ui_kit/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../widgets/custom_appbar.dart';
 
 class ActivtyRecord extends StatelessWidget {
-  const ActivtyRecord({super.key});
+  final String userEmail;
+  const ActivtyRecord({super.key, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -23,48 +23,64 @@ class ActivtyRecord extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  tileColor: ColorsConstant.forebackgroundColor,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        color: Colors.grey[600]!,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25)),
-                  title: Text(
-                    "BreakFast $index",
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text("Description : $index",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 15)),
-                      Text("Checked by : $index",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 15)),
-                    ],
-                  ),
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text("DD/MM/YY $index",
-                          style: const TextStyle(color: Colors.white)),
-                      Text("HR/MIN $index",
-                          style: const TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              );
+        child: FutureBuilder(
+            future: activityController.getRecord(userEmail: userEmail),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data['activityrecord'].length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          tileColor: ColorsConstant.forebackgroundColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: Colors.grey[600]!,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(25)),
+                          title: Text(
+                            "${snapshot.data['activityrecord'][index]['activity']}",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 20),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                  "Description : ${snapshot.data['activityrecord'][index]['description']}",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 15)),
+                              Text(
+                                  "Check by : ${snapshot.data['activityrecord'][index]['checkedby']}",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 15)),
+                            ],
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                  "${snapshot.data['activityrecord'][index]['createdate']}",
+                                  style: const TextStyle(color: Colors.white)),
+                              Text(
+                                  "${snapshot.data['activityrecord'][index]['createtime']}",
+                                  style: const TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
             }),
       ),
       floatingActionButton: FloatingActionButton(
