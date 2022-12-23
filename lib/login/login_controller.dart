@@ -21,8 +21,10 @@ class LoginController extends GetxController {
       Get.to(const HomeView());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+        Get.snackbar("Error", 'No user found for that email.');
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
+        Get.snackbar("Error", 'Wrong password provided for that user.');
         print('Wrong password provided for that user.');
       }
     }
