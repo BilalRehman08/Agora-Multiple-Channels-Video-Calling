@@ -66,7 +66,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '762981530901',
     projectId: 'agora-multiple-channels',
     storageBucket: 'agora-multiple-channels.appspot.com',
-    iosClientId: '762981530901-sksp4liaa9heuln9imu596j30mb70e79.apps.googleusercontent.com',
+    iosClientId:
+        '762981530901-sksp4liaa9heuln9imu596j30mb70e79.apps.googleusercontent.com',
     iosBundleId: 'com.example.agoraUiKit',
   );
 
@@ -76,7 +77,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '762981530901',
     projectId: 'agora-multiple-channels',
     storageBucket: 'agora-multiple-channels.appspot.com',
-    iosClientId: '762981530901-sksp4liaa9heuln9imu596j30mb70e79.apps.googleusercontent.com',
+    iosClientId:
+        '762981530901-sksp4liaa9heuln9imu596j30mb70e79.apps.googleusercontent.com',
     iosBundleId: 'com.example.agoraUiKit',
   );
 }

@@ -26,24 +26,44 @@ class ActivtyRecord extends StatelessWidget {
         child: ListView.builder(
             itemCount: 10,
             itemBuilder: (context, index) {
-              return ListTile(
-                tileColor: ColorsConstant.forebackgroundColor,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.grey[600]!,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(25)),
-                title: Text("BreakFast $index"),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Description $index"),
-                    Text("Description $index"),
-                  ],
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  tileColor: ColorsConstant.forebackgroundColor,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Colors.grey[600]!,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(25)),
+                  title: Text(
+                    "BreakFast $index",
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Description : $index",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 15)),
+                      Text("Checked by : $index",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 15)),
+                    ],
+                  ),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("DD/MM/YY $index",
+                          style: const TextStyle(color: Colors.white)),
+                      Text("HR/MIN $index",
+                          style: const TextStyle(color: Colors.white)),
+                    ],
+                  ),
                 ),
-                trailing: Text("Date & Time $index"),
               );
             }),
       ),
