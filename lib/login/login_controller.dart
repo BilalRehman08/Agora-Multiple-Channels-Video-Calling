@@ -10,8 +10,8 @@ class LoginController extends GetxController {
   loginUser() async {
     try {
       if (kDebugMode) {
-        emailController.text = 'huzaifa@gmail.com';
-        passwordController.text = 'huzaifa123';
+        emailController.text = 'bilal@gmail.com';
+        passwordController.text = 'bilal123';
       }
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -28,5 +28,9 @@ class LoginController extends GetxController {
         print('Wrong password provided for that user.');
       }
     }
+  }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 }
