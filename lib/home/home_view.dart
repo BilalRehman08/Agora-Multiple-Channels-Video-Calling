@@ -1,6 +1,7 @@
 import 'package:agora_ui_kit/activity/activity_users_view.dart';
 import 'package:agora_ui_kit/chats/recent_chat_screen.dart';
 import 'package:agora_ui_kit/widgets/custom_appbar.dart';
+import 'package:agora_ui_kit/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,7 @@ class HomeView extends StatelessWidget {
         ),
       ),
       backgroundColor: ColorsConstant.backgroundColor,
+      drawer: CustomDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -45,6 +47,12 @@ class HomeView extends StatelessWidget {
                   height: 0.3,
                   width: 0.225,
                 ),
+              ],
+            ),
+            SizedBox(height: Get.height * 0.05),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 buttonCard(
                   text: "FOOD/ACTIVITY\nRECORD",
                   icon: Icons.dataset,
@@ -54,29 +62,9 @@ class HomeView extends StatelessWidget {
                   height: 0.3,
                   width: 0.225,
                 ),
-              ],
-            ),
-            SizedBox(height: Get.height * 0.05),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
                 buttonCard(
                   icon: Icons.medical_services,
                   text: "RECORD PATIENTS\nVITALS",
-                  onPressed: () {},
-                  height: 0.3,
-                  width: 0.225,
-                ),
-                buttonCard(
-                  icon: Icons.person,
-                  text: "PROFILE",
-                  onPressed: () {},
-                  height: 0.3,
-                  width: 0.225,
-                ),
-                buttonCard(
-                  icon: Icons.settings,
-                  text: "SETTINGS",
                   onPressed: () {},
                   height: 0.3,
                   width: 0.225,
