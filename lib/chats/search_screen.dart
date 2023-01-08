@@ -1,6 +1,8 @@
 import 'package:agora_ui_kit/chats/chat_controlller.dart';
 import 'package:agora_ui_kit/chats/chat_screen.dart';
 import 'package:agora_ui_kit/utils/custom_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +21,15 @@ class ChatSearchScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.all(15),
+            width: Get.width * 0.7,
+            child: Text(
+              controller.chatInfo,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
             width: Get.width * 0.8,

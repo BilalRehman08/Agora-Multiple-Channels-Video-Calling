@@ -13,14 +13,45 @@ class VideoCallController extends GetxController {
   String serverUrl =
       "https://agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   String newToken = "";
-  User currentUser = FirebaseAuth.instance.currentUser!;
+  User get currentUser => FirebaseAuth.instance.currentUser!;
   int currentUserId = 0;
   bool isJoined = false;
   String channelName = '';
 
   String remoteUserEmail = '';
-  final Stream<QuerySnapshot> usersStream =
-      FirebaseFirestore.instance.collection('users').snapshots();
+
+  String videoPermissionInfo = "";
+
+  Stream<QuerySnapshot> getUsersStream(
+      {required String role,
+      required String facilityId,
+      required String? patientId}) {
+    Query query = FirebaseFirestore.instance.collection('users');
+    if (role == "Family") {
+      query = query.where("id", isEqualTo: patientId!);
+      videoPermissionInfo = "You can only call patient of Id $patientId";
+    } else if (role == "Staff") {
+      query = query
+          .where("facilityId", isEqualTo: facilityId)
+          .where("role", isEqualTo: "Patient");
+      videoPermissionInfo =
+          "You can only call patients of facility Id $facilityId";
+    } else if (role == "Patient") {
+      query = query
+          .where("facilityId", isEqualTo: facilityId)
+          .where("role", isEqualTo: "Staff");
+      videoPermissionInfo =
+          "You can only call your family members and staff of facility Id $facilityId";
+    }
+    return query.snapshots();
+  }
+
+  Stream<QuerySnapshot<Object?>> getFamilyMembersStream(
+      {required String patientId}) {
+    Query query = FirebaseFirestore.instance.collection('users');
+    query = query.where("patientId", isEqualTo: patientId);
+    return query.snapshots();
+  }
 
   int remoteUid = 0;
   Future<void> setupVideoSDKEngine() async {

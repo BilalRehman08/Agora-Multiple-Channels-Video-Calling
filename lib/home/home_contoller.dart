@@ -9,7 +9,7 @@ class HomeController extends GetxController {
     getUserDetails();
   }
 
-  User currentUser = FirebaseAuth.instance.currentUser!;
+  User get currentUser => FirebaseAuth.instance.currentUser!;
   var currentUserName = '';
 
   getUserDetails() async {

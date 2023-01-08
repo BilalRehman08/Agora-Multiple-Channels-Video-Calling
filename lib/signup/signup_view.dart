@@ -1,5 +1,6 @@
 import 'package:agora_ui_kit/login/login_view.dart';
 import 'package:agora_ui_kit/signup/signup_controller.dart';
+import 'package:agora_ui_kit/widgets/custom_dropdown.dart';
 import 'package:agora_ui_kit/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,12 +56,40 @@ class SignUpView extends StatelessWidget {
                           controller: signUpController.emailController,
                         ),
                         const SizedBox(height: 20),
+                        Obx(() => CustomTextField(
+                              hintText: "Password",
+                              isPassword: signUpController.isPasswordNotVisible,
+                              controller: signUpController.passwordController,
+                              onPressedSuffixIcon: () {
+                                signUpController.isPasswordNotVisible.value =
+                                    !signUpController
+                                        .isPasswordNotVisible.value;
+                              },
+                              icon: signUpController.isPasswordNotVisible.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            )),
+                        const SizedBox(height: 20),
                         CustomTextField(
-                          hintText: "Password",
-                          icon: Icons.lock_outline,
-                          isPassword: true,
-                          controller: signUpController.passwordController,
+                          hintText: "Facility ID",
+                          icon: Icons.home,
+                          controller: signUpController.facilityController,
                         ),
+                        Obx(() =>
+                            signUpController.selectedRole.value == "Family"
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: CustomTextField(
+                                        hintText: "Patient ID",
+                                        icon: Icons.person,
+                                        controller: signUpController
+                                            .patientIdController),
+                                  )
+                                : const SizedBox()),
+                        const SizedBox(height: 20),
+                        customDropDown(
+                            dropDownValue: signUpController.selectedRole,
+                            dropDownItems: signUpController.rolesList),
                         const SizedBox(height: 30),
                         Container(
                           height: 40,
@@ -76,7 +105,13 @@ class SignUpView extends StatelessWidget {
                                   signUpController
                                       .emailController.text.isEmpty ||
                                   signUpController
-                                      .passwordController.text.isEmpty) {
+                                      .passwordController.text.isEmpty ||
+                                  signUpController
+                                      .facilityController.text.isEmpty ||
+                                  (signUpController.selectedRole.value ==
+                                          "Family" &&
+                                      signUpController
+                                          .patientIdController.text.isEmpty)) {
                                 Get.snackbar(
                                   "Error",
                                   "Please fill all fields",
@@ -95,7 +130,7 @@ class SignUpView extends StatelessWidget {
                         const SizedBox(height: 20),
                         TextButton(
                           onPressed: () {
-                            Get.to(const LoginView());
+                            Get.back();
                           },
                           child: Text("Login",
                               style: TextStyle(

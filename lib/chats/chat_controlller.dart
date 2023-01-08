@@ -9,9 +9,10 @@ class ChatController extends GetxController {
   RemoteUser? remoteUser;
   RxString currentChatRoomId = "".obs;
   TextEditingController chatMessageController = TextEditingController();
-  User currentUser = FirebaseAuth.instance.currentUser!;
+  User get currentUser => FirebaseAuth.instance.currentUser!;
   List<RemoteUser> allUsers = [];
   RxList<RemoteUser> searchedUsers = <RemoteUser>[].obs;
+  String chatInfo = '';
 
   sendMessage() async {
     if (chatMessageController.text.isNotEmpty) {
@@ -65,12 +66,27 @@ class ChatController extends GetxController {
   }
 
   Future<void> fetchAllUsers() async {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
-        .instance
+    DocumentSnapshot currentUserData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get();
+    Map currentUserDataMap = currentUserData.data() as Map;
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection("users")
         .where("email", isNotEqualTo: currentUser.email)
-        .get();
+        .where("facilityId", isEqualTo: currentUserDataMap["facilityId"]);
+    if (currentUserDataMap["role"] == "Manager" ||
+        currentUserDataMap["role"] == "Family") {
+      query = query.where("role", isEqualTo: "Staff");
+      chatInfo =
+          "You can only search and chat with 'Staff' of facility '${currentUserDataMap["facilityId"]}'";
+    } else if (currentUserDataMap["role"] == "Staff") {
+      query = query.where("role", whereIn: ["Manager", "Family"]);
+      chatInfo =
+          "You can only search and chat with 'Manager' & 'Family' of facility '${currentUserDataMap["facilityId"]}'";
+    }
     allUsers.clear();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await query.get();
     for (DocumentSnapshot<Map<String, dynamic>> document
         in querySnapshot.docs) {
       Map docData = document.data() as Map;

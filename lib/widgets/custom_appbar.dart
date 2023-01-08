@@ -4,7 +4,8 @@ import '../utils/custom_colors.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
-  const CustomAppBar({super.key, required this.title});
+  final double fontSize;
+  const CustomAppBar({super.key, required this.title, this.fontSize = 24});
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +14,10 @@ class CustomAppBar extends StatelessWidget {
       title: Center(
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             letterSpacing: 4,
             color: Colors.white,
-            fontSize: 24,
+            fontSize: fontSize,
           ),
         ),
       ),

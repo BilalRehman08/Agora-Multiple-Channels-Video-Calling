@@ -7,7 +7,8 @@ import '../utils/custom_colors.dart';
 import 'activity_record.dart';
 
 class ActivityView extends StatelessWidget {
-  const ActivityView({super.key});
+  final String facilityId;
+  const ActivityView({super.key, required this.facilityId});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,11 @@ class ActivityView extends StatelessWidget {
       ),
       backgroundColor: ColorsConstant.backgroundColor,
       body: StreamBuilder<QuerySnapshot>(
-        stream: controller.usersStream,
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .where("facilityId", isEqualTo: facilityId)
+            .where("role", isEqualTo: "Patient")
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong'));
@@ -31,48 +36,68 @@ class ActivityView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              if (snapshot.data!.docs[index]['email'] ==
-                  controller.currentUser.email) {
-                controller.currentUserId = snapshot.data!.docs[index]['id'];
-                return const SizedBox();
-              }
-
-              return Padding(
-                padding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
-                child: ListTile(
-                  onTap: () {
-                    Get.to(ActivtyRecord(
-                      currentUserEmail: controller.currentUser.email as String,
-                      userEmail: snapshot.data!.docs[index]['email'],
-                    ));
-                  },
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        color: Colors.grey[600]!,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25)),
-                  leading: const CircleAvatar(backgroundColor: Colors.red),
-                  tileColor: ColorsConstant.forebackgroundColor,
-                  title: Text(snapshot.data!.docs[index]['name'],
-                      style: const TextStyle(
-                          color: Colors.white,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.bold)),
-                  subtitle: Text(
-                    "${snapshot.data!.docs[index]['email']}",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  trailing: const Icon(
-                    Icons.note_add,
-                    color: Colors.white,
-                  ),
+          return Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                width: Get.width * 0.7,
+                child: Text(
+                  "You can only add activity for patients of facility Id $facilityId",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
-              );
-            },
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    if (snapshot.data!.docs[index]['email'] ==
+                        controller.currentUser.email) {
+                      controller.currentUserId =
+                          snapshot.data!.docs[index]['id'];
+                      return const SizedBox();
+                    }
+
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(top: 20.0, right: 20, left: 20),
+                      child: ListTile(
+                        onTap: () {
+                          Get.to(ActivtyRecord(
+                            currentUserEmail:
+                                controller.currentUser.email as String,
+                            userEmail: snapshot.data!.docs[index]['email'],
+                            isStaff: true,
+                          ));
+                        },
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Colors.grey[600]!,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(25)),
+                        leading:
+                            const CircleAvatar(backgroundColor: Colors.red),
+                        tileColor: ColorsConstant.forebackgroundColor,
+                        title: Text(snapshot.data!.docs[index]['name'],
+                            style: const TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                          "${snapshot.data!.docs[index]['email']}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        trailing: const Icon(
+                          Icons.note_add,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

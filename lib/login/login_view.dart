@@ -52,12 +52,18 @@ class LoginView extends StatelessWidget {
                           controller: loginController.emailController,
                         ),
                         const SizedBox(height: 20),
-                        CustomTextField(
-                          hintText: "Password",
-                          icon: Icons.lock_outline,
-                          isPassword: true,
-                          controller: loginController.passwordController,
-                        ),
+                        Obx(() => CustomTextField(
+                              hintText: "Password",
+                              isPassword: loginController.isPasswordNotVisible,
+                              controller: loginController.passwordController,
+                              onPressedSuffixIcon: () {
+                                loginController.isPasswordNotVisible.value =
+                                    !loginController.isPasswordNotVisible.value;
+                              },
+                              icon: loginController.isPasswordNotVisible.value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            )),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -90,7 +96,6 @@ class LoginView extends StatelessWidget {
                               } else {
                                 loginController.loginUser();
                               }
-                              // loginController.loginUser();
                             },
                             child: Text("Login",
                                 style: TextStyle(

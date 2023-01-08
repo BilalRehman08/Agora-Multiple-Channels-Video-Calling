@@ -49,7 +49,14 @@ class UsersListView extends StatelessWidget {
               }
 
               return StreamBuilder<QuerySnapshot>(
-                stream: videoCallController.usersStream,
+                stream: videoCallController.getUsersStream(
+                    role: channelData["role"],
+                    facilityId: channelData["facilityId"],
+                    patientId: channelData["role"] == "Family"
+                        ? channelData["patientId"]
+                        : channelData["role"] == "Patient"
+                            ? channelData["id"]
+                            : null),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
@@ -59,118 +66,170 @@ class UsersListView extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        if (snapshot.data!.docs[index]['email'] ==
-                            videoCallController.currentUser.email) {
-                          videoCallController.currentUserId =
-                              snapshot.data!.docs[index]['id'];
-                          return const SizedBox();
-                        }
-
-                        return Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0, right: 20, left: 20),
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.grey[600]!,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(25)),
-                              leading: const CircleAvatar(
-                                  backgroundColor: Colors.red),
-                              tileColor: ColorsConstant.forebackgroundColor,
-                              title: Text(snapshot.data!.docs[index]['name'],
+                  return StreamBuilder<QuerySnapshot<Object?>>(
+                      stream: channelData["role"] == "Patient"
+                          ? videoCallController.getFamilyMembersStream(
+                              patientId: channelData["id"])
+                          : const Stream.empty(),
+                      builder: (context, snapshot2) {
+                        if (channelData["role"] != "Patient" ||
+                            snapshot2.hasData) {
+                          List<QueryDocumentSnapshot<Object?>> users =
+                              snapshot.data!.docs;
+                          if (channelData["role"] == "Patient") {
+                            users.addAll(snapshot2.data!.docs);
+                          }
+                          return Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(15),
+                                width: Get.width * 0.7,
+                                child: Text(
+                                  videoCallController.videoPermissionInfo,
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                      color: Colors.white,
-                                      letterSpacing: 2,
-                                      fontWeight: FontWeight.bold)),
-                              subtitle: Text(
-                                "${snapshot.data!.docs[index]['email']}",
-                                style: const TextStyle(color: Colors.white),
+                                      color: Colors.white, fontSize: 18),
+                                ),
                               ),
-                              trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.video_call,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () async {
-                                    videoCallController.remoteUserEmail =
-                                        snapshot.data!.docs[index]['email'];
+                              Expanded(
+                                child: ListView.builder(
+                                    itemCount: users.length,
+                                    itemBuilder: (context, index) {
+                                      if (users[index]['email'] ==
+                                          videoCallController
+                                              .currentUser.email) {
+                                        videoCallController.currentUserId =
+                                            users[index]['id'];
+                                        return const SizedBox();
+                                      }
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(videoCallController
-                                            .currentUser.email)
-                                        .update({
-                                      'remoteid': snapshot.data!.docs[index]
-                                          ['id'],
-                                    });
+                                      return Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 20.0, right: 20, left: 20),
+                                          child: ListTile(
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                  color: Colors.grey[600]!,
+                                                  width: 1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            leading: const CircleAvatar(
+                                                backgroundColor: Colors.red),
+                                            tileColor: ColorsConstant
+                                                .forebackgroundColor,
+                                            title: Text(users[index]['name'],
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    letterSpacing: 2,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            subtitle: Text(
+                                              "${users[index]['email']}",
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            trailing: IconButton(
+                                                icon: const Icon(
+                                                  Icons.video_call,
+                                                  color: Colors.white,
+                                                ),
+                                                onPressed: () async {
+                                                  videoCallController
+                                                          .remoteUserEmail =
+                                                      users[index]['email'];
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(
-                                            videoCallController.remoteUserEmail)
-                                        .update({
-                                      'remoteid':
-                                          videoCallController.currentUserId,
-                                    });
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(videoCallController
+                                                          .currentUser.email)
+                                                      .update({
+                                                    'remoteid': snapshot.data!
+                                                        .docs[index]['id'],
+                                                  });
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(videoCallController
-                                            .currentUser.email)
-                                        .update({
-                                      'remoteemail':
-                                          videoCallController.remoteUserEmail,
-                                    });
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(videoCallController
+                                                          .remoteUserEmail)
+                                                      .update({
+                                                    'remoteid':
+                                                        videoCallController
+                                                            .currentUserId,
+                                                  });
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(
-                                            videoCallController.remoteUserEmail)
-                                        .update({
-                                      'remoteemail':
-                                          videoCallController.currentUser.email,
-                                    });
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(videoCallController
+                                                          .currentUser.email)
+                                                      .update({
+                                                    'remoteemail':
+                                                        videoCallController
+                                                            .remoteUserEmail,
+                                                  });
 
-                                    if (videoCallController.currentUserId <
-                                        snapshot.data!.docs[index]['id']) {
-                                      videoCallController.channelName =
-                                          "${videoCallController.currentUserId}${snapshot.data!.docs[index]['id']}";
-                                    } else {
-                                      videoCallController.channelName =
-                                          "${snapshot.data!.docs[index]['id']}${videoCallController.currentUserId}";
-                                    }
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(videoCallController
+                                                          .remoteUserEmail)
+                                                      .update({
+                                                    'remoteemail':
+                                                        videoCallController
+                                                            .currentUser.email,
+                                                  });
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(
-                                            snapshot.data!.docs[index]['email'])
-                                        .update({
-                                      'channelName':
-                                          videoCallController.channelName
-                                    });
+                                                  if (videoCallController
+                                                          .currentUserId <
+                                                      users[index]['id']) {
+                                                    videoCallController
+                                                            .channelName =
+                                                        "${videoCallController.currentUserId}${users[index]['id']}";
+                                                  } else {
+                                                    videoCallController
+                                                            .channelName =
+                                                        "${users[index]['id']}${videoCallController.currentUserId}";
+                                                  }
 
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(videoCallController
-                                            .currentUser.email)
-                                        .update({
-                                      'channelName':
-                                          videoCallController.channelName
-                                    });
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(snapshot.data!
+                                                          .docs[index]['email'])
+                                                      .update({
+                                                    'channelName':
+                                                        videoCallController
+                                                            .channelName
+                                                  });
 
-                                    // await videoCallController.setupVideoSDKEngine(
-                                    //   id: usersListController.currentUserId,
-                                    //   channelName: videoCallController.channelName,
-                                    //   tokenRole: 1,
-                                    // );
-                                    // Get.to(const VideoCallView());
-                                  }),
-                            ));
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('users')
+                                                      .doc(videoCallController
+                                                          .currentUser.email)
+                                                      .update({
+                                                    'channelName':
+                                                        videoCallController
+                                                            .channelName
+                                                  });
+
+                                                  // await videoCallController.setupVideoSDKEngine(
+                                                  //   id: usersListController.currentUserId,
+                                                  //   channelName: videoCallController.channelName,
+                                                  //   tokenRole: 1,
+                                                  // );
+                                                  // Get.to(const VideoCallView());
+                                                }),
+                                          ));
+                                    }),
+                              ),
+                            ],
+                          );
+                        }
+                        return const Center(child: CircularProgressIndicator());
                       });
                 },
               );
