@@ -12,16 +12,16 @@ class LoginController extends GetxController {
 
   loginUser() async {
     try {
-      if (kDebugMode) {
-        emailController.text = 'family1@gmail.com';
-        passwordController.text = 'family1';
-      }
+      // if (kDebugMode) {
+      //   emailController.text = 'family1@gmail.com';
+      //   passwordController.text = 'family1';
+      // }
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      Get.to(const HomeView());
+      Get.offAll(const HomeView());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Get.snackbar("Error", 'No user found for that email.');

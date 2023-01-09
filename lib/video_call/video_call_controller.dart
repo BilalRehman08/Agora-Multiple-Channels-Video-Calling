@@ -25,7 +25,7 @@ class VideoCallController extends GetxController {
   Stream<QuerySnapshot> getUsersStream(
       {required String role,
       required String facilityId,
-      required String? patientId}) {
+      required int? patientId}) {
     Query query = FirebaseFirestore.instance.collection('users');
     if (role == "Family") {
       query = query.where("id", isEqualTo: patientId!);
@@ -47,7 +47,7 @@ class VideoCallController extends GetxController {
   }
 
   Stream<QuerySnapshot<Object?>> getFamilyMembersStream(
-      {required String patientId}) {
+      {required int patientId}) {
     Query query = FirebaseFirestore.instance.collection('users');
     query = query.where("patientId", isEqualTo: patientId);
     return query.snapshots();

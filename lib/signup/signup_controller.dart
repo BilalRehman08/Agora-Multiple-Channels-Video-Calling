@@ -18,16 +18,33 @@ class SignUpController extends GetxController {
   RxString selectedRole = "Patient".obs;
   Map modules = {};
 
+  // function to create sample users
+  createSampleUsers() async {
+    for (String role in rolesList) {
+      for (var i = 1; i <= 4; i++) {
+        nameController.text = '$role$i';
+        emailController.text = '${role.toLowerCase()}$i@gmail.com';
+        passwordController.text = '${role.toLowerCase()}$i';
+        facilityController.text = '${(i % 2) + 1}';
+        selectedRole.value = role;
+        if (role == "Family") {
+          patientIdController.text = '${i + 8}';
+        }
+        await addUser();
+      }
+    }
+  }
+
   signUpUser() async {
     try {
-      if (kDebugMode) {
-        nameController.text = 'Family1';
-        emailController.text = 'family1@gmail.com';
-        passwordController.text = 'family1';
-        facilityController.text = '2';
-        selectedRole.value = "Family";
-        patientIdController.text = '13';
-      }
+      // if (kDebugMode) {
+      // nameController.text = 'Family1';
+      // emailController.text = 'family1@gmail.com';
+      // passwordController.text = 'family1';
+      // facilityController.text = '2';
+      // selectedRole.value = "Family";
+      // patientIdController.text = '13';
+      // }
       await addUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -46,7 +63,7 @@ class SignUpController extends GetxController {
     if (selectedRole.value == "Family") {
       QuerySnapshot temp = await FirebaseFirestore.instance
           .collection("users")
-          .where("id", isEqualTo: patientIdController.text)
+          .where("id", isEqualTo: int.parse(patientIdController.text))
           .get();
       if (temp.docs.isEmpty) {
         Get.snackbar("Error", "Invalid Patient ID");
@@ -110,9 +127,11 @@ class SignUpController extends GetxController {
           'email': emailController.text,
           'role': selectedRole.value,
           'facilityId': facilityController.text,
-          'id': tempID.toString(),
+          'id': tempID,
           'channelName': '',
-          'patientId': patientIdController.text,
+          'patientId': patientIdController.text.isNotEmpty
+              ? int.parse(patientIdController.text)
+              : 0,
           'patientEmail': patientEmail,
           'remoteid': 0,
           'remoteemail': '',
@@ -128,6 +147,6 @@ class SignUpController extends GetxController {
     facilityController.clear();
     patientIdController.clear();
     selectedRole.value = 'Patient';
-    Get.to(const HomeView());
+    Get.offAll(const HomeView());
   }
 }

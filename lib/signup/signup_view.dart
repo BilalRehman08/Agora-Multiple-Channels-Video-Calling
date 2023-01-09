@@ -99,7 +99,7 @@ class SignUpView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (signUpController
                                       .nameController.text.isEmpty ||
                                   signUpController
@@ -117,7 +117,7 @@ class SignUpView extends StatelessWidget {
                                   "Please fill all fields",
                                 );
                               } else {
-                                signUpController.signUpUser();
+                                await signUpController.signUpUser();
                               }
                             },
                             child: Text("Create",
