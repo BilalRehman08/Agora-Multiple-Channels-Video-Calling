@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 class VideoCallController extends GetxController {
   bool isMicrophoneMuted = false;
   String serverUrl =
-      "https://agora-token-service-production-a171.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
+      "http://agora-token-service-production-3319.up.railway.app"; // The base URL to your token server, for example "https://agora-token-service-production-92ff.up.railway.app"
   String newToken = "";
   User get currentUser => FirebaseAuth.instance.currentUser!;
   int currentUserId = 0;

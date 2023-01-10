@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'firebase_options.dart';
 
 late RtcEngine agoraEngine;
-String appId = "0efec5e57b8f47dabffb86ed5e5a3d5d";
+String appId = "de1a2cbf0b17418bbbc537de354f2dee";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
