@@ -95,13 +95,8 @@ class UsersListView extends StatelessWidget {
                                 child: ListView.builder(
                                     itemCount: users.length,
                                     itemBuilder: (context, index) {
-                                      if (users[index]['email'] ==
-                                          videoCallController
-                                              .currentUser.email) {
-                                        videoCallController.currentUserId =
-                                            users[index]['id'];
-                                        return const SizedBox();
-                                      }
+                                      videoCallController.currentUserId =
+                                          channelData["id"];
 
                                       return Padding(
                                           padding: const EdgeInsets.only(
