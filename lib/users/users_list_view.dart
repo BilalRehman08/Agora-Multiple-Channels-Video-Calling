@@ -140,8 +140,8 @@ class UsersListView extends StatelessWidget {
                                                       .doc(videoCallController
                                                           .currentUser.email)
                                                       .update({
-                                                    'remoteid': snapshot.data!
-                                                        .docs[index]['id'],
+                                                    'remoteid': users[index]
+                                                        ['id'],
                                                   });
 
                                                   await FirebaseFirestore
@@ -192,8 +192,8 @@ class UsersListView extends StatelessWidget {
                                                   await FirebaseFirestore
                                                       .instance
                                                       .collection('users')
-                                                      .doc(snapshot.data!
-                                                          .docs[index]['email'])
+                                                      .doc(
+                                                          users[index]['email'])
                                                       .update({
                                                     'channelName':
                                                         videoCallController
