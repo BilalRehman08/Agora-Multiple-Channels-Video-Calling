@@ -75,12 +75,16 @@ class ChatController extends GetxController {
         .collection("users")
         .where("email", isNotEqualTo: currentUser.email)
         .where("facilityId", isEqualTo: currentUserDataMap["facilityId"]);
-    if (currentUserDataMap["role"] == "Manager" ||
-        currentUserDataMap["role"] == "Family") {
-      query = query.where("role", isEqualTo: "Staff");
+    if (currentUserDataMap["role"] == "Manager") {
+      query = query.where("role", whereIn: ["Staff", "Family"]);
       chatInfo =
-          "You can only search and chat with 'Staff' of facility '${currentUserDataMap["facilityId"]}'";
-    } else if (currentUserDataMap["role"] == "Staff") {
+          "You can only search and chat with 'Staff' and 'Family' of facility '${currentUserDataMap["facilityId"]}'";
+    } else if (currentUserDataMap["role"] == "Family") {
+      query = query.where("role", isEqualTo: "Manager");
+      chatInfo =
+          "You can only search and chat only with 'Manager' of facility '${currentUserDataMap["facilityId"]}'";
+    }
+    else if (currentUserDataMap["role"] == "Staff") {
       query = query.where("role", whereIn: ["Manager", "Family"]);
       chatInfo =
           "You can only search and chat with 'Manager' & 'Family' of facility '${currentUserDataMap["facilityId"]}'";

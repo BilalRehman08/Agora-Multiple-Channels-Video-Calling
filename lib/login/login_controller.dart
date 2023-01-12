@@ -12,10 +12,10 @@ class LoginController extends GetxController {
 
   loginUser() async {
     try {
-      // if (kDebugMode) {
-      //   emailController.text = 'family1@gmail.com';
-      //   passwordController.text = 'family1';
-      // }
+      if (kDebugMode) {
+        emailController.text = 'family1@gmail.com';
+        passwordController.text = 'family1';
+      }
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,

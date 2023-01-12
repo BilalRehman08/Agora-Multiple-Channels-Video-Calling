@@ -103,7 +103,7 @@ class SignUpController extends GetxController {
     } else if (selectedRole.value == "Manager") {
       modules = {
         "chat": true,
-        "patient_record": false,
+        "patient_record": true,
         "patient_vitals": false,
         "role_management": true,
         "video": false

@@ -46,7 +46,7 @@ class HomeController extends GetxController {
       text: "FOOD/ACTIVITY\nRECORD",
       icon: Icons.dataset,
       onPressed: () {
-        if (data["role"] == "Staff") {
+        if (data["role"] == "Staff" || data["role"] == "Manager") {
           Get.to(ActivityView(facilityId: data["facilityId"]));
         } else {
           if (data["role"] == "Family") {
